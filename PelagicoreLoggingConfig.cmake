@@ -1,0 +1,9 @@
+
+FIND_PACKAGE(PkgConfig REQUIRED)
+pkg_check_modules(PELAGICORE_LOGGING REQUIRED pelagicore-logging)
+add_definitions(${PELAGICORE_LOGGING_CFLAGS})
+link_directories(${PELAGICORE_LOGGING_LIBRARY_DIRS})
+
+set(LOGGING_LIBRARIES "${PELAGICORE_LOGGING_LIBRARIES}")
+set(LOGGING_INCLUDE_STATEMENT "#include \"pelagicore-log.h\"")
+set(LOGGING_PKG_CONFIG_DEPENDENCIES "pelagicore-logging")
