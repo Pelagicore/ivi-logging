@@ -1,6 +1,3 @@
-// Enable verbose logs for the console output, which are disabled by default
-#define LOG_CONSOLE_SEVERITY LogLevel::Verbose
-
 #include "exampleLogging.h"
 #include <unistd.h>
 
@@ -57,8 +54,10 @@ void myFunction() {
 
 }
 
+
 int main(int argc, const char** argv) {
 
+	log_error().writeFormatted("Another way to use the printf variant %i", 7345);
 	log_warn("Starting app");
 
 	log_debug("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
@@ -84,3 +83,4 @@ int main(int argc, const char** argv) {
 	sleep(1);
 
 }
+

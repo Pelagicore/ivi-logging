@@ -62,14 +62,17 @@ public:
 	}
 
 	void checkContext() {
-		registerDefaultAPPIDSIfNeeded();
-		if (!s_pAppLogContext->consoleRegistered) {
-			//			fprintf(stdout, LOGGING_WARNING_OUTPUT_PREFIX "Initializing logging, appID:\"%s\", description:\"%s\"\n", s_pAppLogContext->m_id,					s_pAppLogContext->m_description);
-			s_pAppLogContext->consoleRegistered = true;
+		if (!m_bRegistered) {
+			registerDefaultAPPIDSIfNeeded();
+			if (!s_pAppLogContext->consoleRegistered) {
+				//			fprintf(stdout, LOGGING_WARNING_OUTPUT_PREFIX "Initializing logging, appID:\"%s\", description:\"%s\"\n", s_pAppLogContext->m_id,					s_pAppLogContext->m_description);
+				s_pAppLogContext->consoleRegistered = true;
+			}
+	#ifdef ENABLE_DLT_LOGGING
+			DltContextClass::registerContext();
+	#endif
+			m_bRegistered = true;
 		}
-#ifdef ENABLE_DLT_LOGGING
-		DltContextClass::registerContext();
-#endif
 
 	}
 
@@ -90,6 +93,7 @@ public:
 		return enabled;
 	}
 
+	bool m_bRegistered = false;
 };
 
 class LogData : private DummyClass {
@@ -187,36 +191,53 @@ public:
 		contextDescription);
 
 /**
- * Import the given LogContext
+ * Create a new context and define is as default context for the current scope
+ */
+#define LOG_DECLARE_DEFAULT_CONTEXT(context, contextID, contextDescription) \
+	LOG_DECLARE_CONTEXT(context, contextID, contextDescription); \
+	LOG_SET_DEFAULT_CONTEXT(context);
+
+/**
+ * Import the given context, which should exported by another module
  */
 #define LOG_IMPORT_CONTEXT(contextName) extern pelagicore::LogContext contextName;
 
-#define LOG_SET_DEFAULT_CONTEXT(context) static inline pelagicore::LogContext & getDefaultContext() {return context; }
+/**
+ * Set the given context as default for the current scope
+ */
+#define LOG_SET_DEFAULT_CONTEXT(context) static std::function<pelagicore::LogContext& ()> getDefaultContext = []()->pelagicore::LogContext & {return context; };
 
-#define LOG_SET_CLASS_CONTEXT(context) static inline pelagicore::LogContext & getDefaultContext() {return context; }
-
-#define LOG_DECLARE_DEFAULT_CONTEXT(context, contextID, contextDescription) LOG_DECLARE_CONTEXT(context, contextID, \
-												contextDescription); \
-	LOG_SET_DEFAULT_CONTEXT(context);
-
-
-#define LOG_SET_DEFAULT_LOCAL_CONTEXT(context) \
-	std::function<pelagicore::LogContext& ()> getDefaultContext = [&]()->pelagicore::LogContext & {return context; };
-
-#define LOG_DECLARE_DEFAULT_LOCAL_CONTEXT(contextShortID, contextDescription) \
-	std::function<pelagicore::LogContext& ()> getDefaultContext = [&]()->pelagicore::LogContext & \
-	{static pelagicore::LogContext __defaultContext( \
-		 contextShortID, \
-		 contextDescription); \
-	 return __defaultContext; };
-
+/**
+ * Import the given context and set it as default for the current scope
+ */
 #define LOG_IMPORT_DEFAULT_CONTEXT(context) LOG_IMPORT_CONTEXT(context); LOG_SET_DEFAULT_CONTEXT(context);
 
-#define LOG_DECLARE_CLASS_CONTEXT(contextShortID, contextDescription) \
-	inline static pelagicore::LogContext & getDefaultContext() {static pelagicore::LogContext __defaultLogContext( \
-									    contextShortID, contextDescription); \
-								    return __defaultLogContext; }
+/**
+ * Set the given context as default for the current class
+ */
+#define LOG_SET_CLASS_CONTEXT(context) static inline pelagicore::LogContext & getDefaultContext() { return context; }
 
+/**
+ *
+ */
+#define LOG_DECLARE_DEFAULT_LOCAL_CONTEXT(contextShortID, contextDescription) \
+	std::function<pelagicore::LogContext& ()> getDefaultContext = []()->pelagicore::LogContext & { \
+		static pelagicore::LogContext __defaultContext( contextShortID, contextDescription); \
+		return __defaultContext; \
+	}
+
+/**
+ *
+ */
+#define LOG_DECLARE_CLASS_CONTEXT(contextShortID, contextDescription) \
+	static pelagicore::LogContext & getDefaultContext() { \
+		static pelagicore::LogContext __defaultLogContext( contextShortID, contextDescription); \
+	    return __defaultLogContext; \
+	}
+
+/**
+ * Deprecated
+ */
 #define LOG_INSTANTIATE_CLASS_CONTEXT(className__)
 
 #endif

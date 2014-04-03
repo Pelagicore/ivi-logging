@@ -6,8 +6,6 @@
 
 namespace pelagicore {
 
-bool m_bLogEnabled = true;
-
 ConsoleLogOutput consoleLog(stdout);
 ConsoleLogOutput* ConsoleLogOutput::s_instance = &consoleLog;
 

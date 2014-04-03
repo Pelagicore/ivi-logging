@@ -86,4 +86,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pelagicore-logging.pc DESTINATION ${CM
 
 
 add_subdirectory (examples)
+add_subdirectory (doc)
 

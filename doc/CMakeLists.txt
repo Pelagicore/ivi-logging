@@ -7,9 +7,9 @@ else()
 	# prepare doxygen configuration file
 	set(DOXYGEN_SRCDIR ${PROJECT_SOURCE_DIR})
 	set(OUTDIR ${PROJECT_BINARY_DIR})
-	set(DOXYGEN_EXAMPLES_PATH ${PROJECT_SOURCE_DIR}/examples)
+	set(DOXYGEN_EXAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../examples)
 	set(DOXYGEN_PROJECT_NAME ${PACKAGE})
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../pelagicore.doxygen.cfg.in ${PROJECT_BINARY_DIR}/doc/doxygen.cfg)
+	configure_file(doxygen.cfg.in doxygen.cfg)
 	
 	# add doxygen as target
 	add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/doc/doxygen COMMAND ${DOXYGEN_EXECUTABLE} ARGS ${PROJECT_BINARY_DIR}/doc/doxygen.cfg)
