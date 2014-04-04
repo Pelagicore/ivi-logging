@@ -12,8 +12,6 @@
 	#define LOG_CONSOLE_SUFFIX_FORMAT_STRING "  %s / %s - %d"
 #endif
 
-#define LOG_FILE_SET_OUTPUT(file)
-
 namespace pelagicore {
 
 // If no severity is already specified, set it to debug
@@ -37,14 +35,6 @@ public:
 		return m_file;
 	}
 
-	static void setInstance(ConsoleLogOutput& logManager) {
-		s_instance = &logManager;
-	}
-
-	static ConsoleLogOutput& getInstance() {
-		return *s_instance;
-	}
-
 	const char* getPath() {
 		return m_path.c_str();
 	}
@@ -52,44 +42,72 @@ public:
 private:
 	FILE* m_file;
 	std::string m_path;
-	static ConsoleLogOutput* s_instance;
 
 };
 
-class ConsoleLogContext {
+class ConsoleLogData;
+
+class ConsoleLogContextAbstract {
 public:
-	ConsoleLogContext(const char* id, const char* contextDescription) {
-		m_id = id;
-		m_description = contextDescription;
+	typedef ConsoleLogData LogDataType;
+
+	ConsoleLogContextAbstract() {
 	}
 
-	const char* getDescription() {
-		return m_description;
+	void setParentContext(LogContextAbstract& context) {
+		m_context = &context;
 	}
 
 	const char* getShortID() {
-		return m_id;
+		return m_context->m_id;
 	}
 
-	FILE* getFile() {
-		return ConsoleLogOutput::getInstance().getFile();
+	void registerContext() {
 	}
+
+	virtual FILE* getFile() = 0;
 
 	bool isEnabled(LogLevel level) {
-		return (level <= LOG_CONSOLE_SEVERITY);
+		return (level <= m_level);
+	}
+
+	void setLogLevel(LogLevel level) {
+		m_level = level;
 	}
 
 	void write(const void* s) {
 		std::lock_guard<std::mutex> lock(m_outputMutex);
-		fprintf(getFile(), "%s\n", (const char*)s);
+		auto file = getFile();
+		if (file) {
+			fprintf(file, "%s\n", (const char*)s);
+			fflush(file);
+		}
 	}
 
-	const char* m_id;
-	const char* m_description;
-	int m_fd = -1;
+	bool colorsEnabled() {
+		return m_colorsEnabled;
+	}
 
 	std::mutex m_outputMutex;
+	LogContextAbstract* m_context = nullptr;
+	LogLevel m_level = LOG_CONSOLE_SEVERITY;
+	bool m_colorsEnabled = true;
 };
+
+
+class ConsoleLogContext : public ConsoleLogContextAbstract {
+
+public:
+
+	FILE* getFile() override {
+		return m_file;
+	}
+
+private:
+	FILE* m_file = stdout;
+
+};
+
 
 class ConsoleLogData {
 
@@ -102,23 +120,25 @@ class ConsoleLogData {
 	};
 
 public:
-	ConsoleLogData(ConsoleLogContext& aContext, LogLevel logLevel, const char* fileName, int lineNumber,
-		       const char* prettyFunction) :
-		m_context(aContext), m_logLevel(logLevel) {
+	typedef ConsoleLogContextAbstract ContextType;
 
-		m_fileName = fileName;
-		m_lineNumber = lineNumber;
-		m_prettyFunction = prettyFunction;
+	ConsoleLogData() {
+	}
+
+	void init(ConsoleLogContextAbstract& aContext, LogDataAbstract& data) {
+		m_context = &aContext;
+		m_data = &data;
 
 		if ( isEnabled() ) {
-			changeCurrentColor(Command::RESET, getColor(logLevel), Color::BLACK);
-			writeFormatted( LOG_CONSOLE_PREFIX_FORMAT_STRING, getLogLevelString(logLevel), aContext.getShortID() );
+			changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
+			writeFormatted( LOG_CONSOLE_PREFIX_FORMAT_STRING, getLogLevelString(m_data->m_level), aContext.getShortID() );
 		}
 	}
 
 	void changeCurrentColor(Command attr, Color fg, Color bg) {
 		/* Command is the control command to the terminal */
-		writeFormatted("%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30, static_cast<int>(bg) + 40);
+		if (m_context->colorsEnabled())
+			writeFormatted("%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30, static_cast<int>(bg) + 40);
 	}
 
 	static const char* getLogLevelString(LogLevel logLevel) {
@@ -148,18 +168,19 @@ public:
 	~ConsoleLogData() {
 		// flush
 		if ( isEnabled() ) {
-			writeFormatted(LOG_CONSOLE_SUFFIX_FORMAT_STRING, m_fileName, m_prettyFunction, m_lineNumber);
+			writeFormatted(LOG_CONSOLE_SUFFIX_FORMAT_STRING, m_data->m_fileName, m_data->m_prettyFunction,
+				       m_data->m_lineNumber);
 			// add terminal null character
 			m_content.resize(m_content.size() + 1);
 			m_content[m_content.size() - 1] = 0;
 			changeCurrentColor(Command::RESET, getColor(LogLevel::None), Color::BLACK);
-			m_context.write( m_content.getData() );
+			m_context->write( m_content.getData() );
 			//			fprintf(getFile(), "%s\n", m_content.getData());
 		}
 	}
 
 	bool isEnabled() {
-		return (m_logLevel <= LOG_CONSOLE_SEVERITY);
+		return (m_data->m_level <= LOG_CONSOLE_SEVERITY);
 	}
 
 	void write() {
@@ -194,13 +215,9 @@ public:
 	}
 
 private:
-	ConsoleLogContext& m_context;
-	LogLevel m_logLevel;
+	ContextType* m_context;
 	ByteArray m_content;
-
-	const char* m_fileName;
-	int m_lineNumber;
-	const char* m_prettyFunction;
+	LogDataAbstract* m_data = nullptr;
 };
 
 inline ConsoleLogData& operator<<(ConsoleLogData& data, bool v) {

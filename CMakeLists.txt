@@ -21,7 +21,7 @@ if (NOT DEFINED DISABLE_DLT)
 
 		set (LOGGING_LIBRARY_DIRS ${DLT_LIBRARY_DIRS} PARENT_SCOPE)
 
-		set(DLT_LIBRARY_FILES src/log-dlt.cpp) 
+#		set(DLT_LIBRARY_FILES src/log-dlt.cpp) 
 
 		link_directories(
 			${DLT_LIBRARY_DIRS}
@@ -39,9 +39,10 @@ include_directories(
 )
 
 set(INCLUDE_FILES
-	include/pelagicore-log.h
+	include/plog.h
 	include/log-types.h
 	include/log-console.h
+	include/log-file.h
 	include/log-common.h
 	include/ByteArray.h
 )

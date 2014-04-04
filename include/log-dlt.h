@@ -7,17 +7,24 @@
 
 namespace pelagicore {
 
+class DltLogData;
+
 class DltContextClass : public DltContext {
+
 public:
-	DltContextClass(const char* contextID, const char* description) {
-		m_contextID = contextID;
-		m_description = description;
+	typedef DltLogData LogDataType;
+
+	DltContextClass() {
 	}
 
 	void registerDLTContext();
 
 	~DltContextClass() {
 		dlt_unregister_context(this);
+	}
+
+	void setParentContext(LogContextAbstract& context) {
+		m_context = &context;
 	}
 
 	bool isEnabled(LogLevel logLevel);
@@ -36,12 +43,33 @@ public:
 		return v;
 	}
 
-	void registerContext();
+	void registerContext() {
+		//	if (!m_isInitialized) {
+		if ( !isAppRegistered() ) {
+			DltRegisterApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
+		}
+		auto code =
+			dlt_register_context( this, m_context->getID(), m_context->getDescription() );
+		assert(code == 0);
+		//		m_isInitialized = true;
+		//	}
+
+	}
+
+	static bool& isAppRegistered() {
+		static bool m_appRegistered = false;
+		return m_appRegistered;
+	}
+
+	static void DltRegisterApp(const char* id, const char* description) {
+		dlt_register_app(id, description);
+		isAppRegistered() = true;
+	}
 
 private:
-	const char* m_contextID;
-	const char* m_description;
-	bool m_isInitialized = false;
+	//	bool m_isInitialized = false;
+	LogContextAbstract* m_context = nullptr;
+
 };
 
 /**
@@ -59,20 +87,27 @@ private:
 
  */
 class DltLogData : public DltContextData {
+
 public:
-	DltLogData(DltContextClass& aContext, LogLevel logLevel, const char* fileName = NULL, int lineNumber = -1,
-		   const char* prettyFunction = NULL) :
-		context(aContext), m_fileName(fileName), m_lineNumber(lineNumber), m_prettyFunction(prettyFunction) {
-		enabled = dlt_user_log_write_start( &context, this, aContext.getDLTLogLevel(logLevel) );
+	typedef DltContextClass ContextType;
+
+	DltLogData() {
+	}
+
+	void init(DltContextClass& aContext, LogDataAbstract& data) {
+		m_data = &data;
+		context = &aContext;
+		enabled = dlt_user_log_write_start( context, this, aContext.getDLTLogLevel(m_data->m_level) );
 	}
 
 	~DltLogData() {
 		if (enabled) {
-			if (m_fileName != NULL) dlt_user_log_write_utf8_string(this, m_fileName);
-			if (m_lineNumber != -1) dlt_user_log_write_uint32(this, m_lineNumber);
-			if (m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this, m_prettyFunction);
+			if (m_data->m_fileName != NULL) dlt_user_log_write_utf8_string(this, m_data->m_fileName);
+			if (m_data->m_lineNumber != -1) dlt_user_log_write_uint32(this, m_data->m_lineNumber);
+			if (m_data->m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this, m_data->m_prettyFunction);
 
-			dlt_user_log_write_finish(this);
+			auto r = dlt_user_log_write_finish(this);
+			//			assert(r==0);
 		}
 	}
 
@@ -101,11 +136,9 @@ public:
 
 private:
 	bool enabled;
-	DltContextClass& context;
+	DltContextClass* context;
 
-	const char* m_fileName;
-	int m_lineNumber;
-	const char* m_prettyFunction;
+	LogDataAbstract* m_data = nullptr;
 
 };
 

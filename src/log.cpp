@@ -6,9 +6,6 @@
 
 namespace pelagicore {
 
-ConsoleLogOutput consoleLog(stdout);
-ConsoleLogOutput* ConsoleLogOutput::s_instance = &consoleLog;
-
 AppLogContext* s_pAppLogContext = nullptr;
 
 struct ThreadInformation {

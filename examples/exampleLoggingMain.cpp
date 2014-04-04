@@ -1,6 +1,8 @@
 #include "exampleLogging.h"
 #include <unistd.h>
 
+#include "log-types.h"
+
 // Each executable needs to define its logging identifiers once
 LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use Pelagicore logging");
 
@@ -78,9 +80,9 @@ int main(int argc, const char** argv) {
 	std::vector<char> charVector;
 	for (char i = '0'; i <= '9'; i++)
 		charVector.push_back(i);
+
 	log_warn("This is a vector of chars : ") << charVector;
 
 	sleep(1);
 
 }
-

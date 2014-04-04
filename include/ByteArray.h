@@ -131,8 +131,8 @@ private:
 
 typedef ByteArray ResizeableByteArray;
 
-class LogData;
+//class LogData;
 
-LogData& operator<<(LogData& log, const ByteArray& v);
+//LogData& operator<<(LogData& log, const ByteArray& v);
 
 }
