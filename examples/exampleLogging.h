@@ -15,13 +15,18 @@
 
 
 namespace pelagicore {
-typedef pelagicore::LogContextT<Input<pelagicore::ConsoleLogContext,
-				      pelagicore::DltContextClass>, Output<ConsoleLogData, DltLogData> > LogContext;
-typedef pelagicore::LogContextT<Input<pelagicore::DltContextClass>, Output<DltLogData> > LogContext9;
-typedef pelagicore::LogContextT<Input<pelagicore::DltContextClass,
-				      pelagicore::DltContextClass>, Output<DltLogData, DltLogData> > LogContext8;
-typedef pelagicore::LogContextT<Input<pelagicore::ConsoleLogContext
-				      >, Output<ConsoleLogData> > LogContext2;
+
+typedef pelagicore::LogContextT<
+		Input<pelagicore::ConsoleLogContext
+#ifdef ENABLE_DLT_LOGGING
+		,pelagicore::DltContextClass
+#endif
+		>, Output<pelagicore::ConsoleLogContext::LogDataType
+#ifdef ENABLE_DLT_LOGGING
+		, pelagicore::DltContextClass::LogDataType
+#endif
+		> > LogContext;
+
 }
 
 // Import the application's contexts so that they can be used in any file which includes this header
