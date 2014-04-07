@@ -4,6 +4,7 @@
 #pragma once
 
 #include "log-common.h"
+#include "plog.h"
 #include <vector>
 #include <string>
 

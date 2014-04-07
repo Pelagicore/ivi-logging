@@ -17,13 +17,13 @@ public:
 	DltContextClass() {
 	}
 
-	void registerDLTContext();
-
 	~DltContextClass() {
 		dlt_unregister_context(this);
 	}
 
-	void setParentContext(LogContextAbstract& context) {
+	void registerDLTContext();
+
+	void setParentContext(LogContextCommon& context) {
 		m_context = &context;
 	}
 
@@ -44,13 +44,12 @@ public:
 	}
 
 	void registerContext() {
-		//	if (!m_isInitialized) {
 		if ( !isAppRegistered() ) {
 			DltRegisterApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
 		}
-		auto code =
+//		auto code =
 			dlt_register_context( this, m_context->getID(), m_context->getDescription() );
-		assert(code == 0);
+//		assert(code == 0);
 		//		m_isInitialized = true;
 		//	}
 
@@ -67,8 +66,7 @@ public:
 	}
 
 private:
-	//	bool m_isInitialized = false;
-	LogContextAbstract* m_context = nullptr;
+	LogContextCommon* m_context = nullptr;
 
 };
 
@@ -106,7 +104,8 @@ public:
 			if (m_data->m_lineNumber != -1) dlt_user_log_write_uint32(this, m_data->m_lineNumber);
 			if (m_data->m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this, m_data->m_prettyFunction);
 
-			auto r = dlt_user_log_write_finish(this);
+//			auto r =
+					dlt_user_log_write_finish(this);
 			//			assert(r==0);
 		}
 	}
@@ -137,16 +136,9 @@ public:
 private:
 	bool enabled;
 	DltContextClass* context;
-
 	LogDataAbstract* m_data = nullptr;
 
 };
-
-//inline void test_sendLogToDLT() {
-//	DltContextClass myDLTContext("TEST", "This is my context"); // Create a context object and register it
-//	DltLogData log(myDLTContext, LogLevel::Info);
-//	log << "This is a string. Here's an int " << 6 << " and a float: " << 5.8F;     // The log object gets destroyed after this line, which actually sends the log to the DLT daemon
-//}
 
 inline bool DltContextClass::isEnabled(LogLevel logLevel) {
 	// TODO : find a way to access the context's current logLevel without having to call a function

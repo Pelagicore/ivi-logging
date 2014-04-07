@@ -1,18 +1,12 @@
 #pragma once
 
-// Enable verbose logs for the console output, which are disabled by default
-#define LOG_CONSOLE_SEVERITY LogLevel::Verbose
-
 #include "plog.h"
 
 #ifdef ENABLE_DLT_LOGGING
 #include "log-dlt.h"
 #endif
 
-#ifdef ENABLE_CONSOLE_LOGGING
 #include "log-console.h"
-#endif
-
 
 namespace pelagicore {
 

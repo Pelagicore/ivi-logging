@@ -143,7 +143,7 @@ template<class, class> class LogContextT;
 
 template<template<class ...> class ContextTypesClass, class ... ContextTypes,
 	 template<class ...> class ContextDataTypesClass, class ... LogDataTypes>
-class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<LogDataTypes ...> > : public LogContextAbstract {
+class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<LogDataTypes ...> > : public LogContextCommon {
 
 	struct setParentContextFunctor {
 		template<typename T, typename ParentType>
@@ -247,7 +247,7 @@ public:
 		std::tuple<LogDataTypes ...> m_contexts;
 	};
 
-	LogContextT(const char* id, const char* contextDescription) : LogContextAbstract(id, contextDescription) {
+	LogContextT(const char* id, const char* contextDescription) : LogContextCommon(id, contextDescription) {
 		for_each_in_tuple_(m_contexts, setParentContextFunctor(), *this);
 	}
 
@@ -264,7 +264,7 @@ public:
 
 	void checkContext() {
 		if (!m_bRegistered) {
-			registerDefaultAPPIDSIfNeeded();
+			setDefaultAPPIDSIfNeeded();
 			for_each_in_tuple_( m_contexts, registerContextFunctor() );
 			m_bRegistered = true;
 		}

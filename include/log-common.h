@@ -4,13 +4,8 @@
 #include <string>
 #include <string.h>
 
-#ifndef DISABLE_CONSOLE_LOGGING
-#define ENABLE_CONSOLE_LOGGING 1
-#endif
-
 namespace pelagicore {
 
-//static constexpr char* LOGGING_WARNING_OUTPUT_PREFIX = "Logging: ";
 #define LOGGING_WARNING_OUTPUT_PREFIX "Logging: "
 
 enum class LogLevel {
@@ -35,27 +30,18 @@ struct AppLogContext {
 	}
 	std::string m_id;
 	std::string m_description;
-
-	//#ifdef ENABLE_DLT_LOGGING
-	//	bool dltRegistered = false;
-	//#endif
-	//
-	//#ifdef ENABLE_CONSOLE_LOGGING
-	//	bool consoleRegistered = false;
-	//#endif
-
 };
 
-void registerDefaultAPPIDSIfNeeded();
+void setDefaultAPPIDSIfNeeded();
 
 
 /**
  * A logging context
  */
-class LogContextAbstract {
+class LogContextCommon {
 
 public:
-	LogContextAbstract(const char* id, const char* contextDescription) : m_id(id), m_description(contextDescription) {
+	LogContextCommon(const char* id, const char* contextDescription) : m_id(id), m_description(contextDescription) {
 		if (strlen(id) > 4)
 			fprintf(
 				stderr,
@@ -65,9 +51,8 @@ public:
 
 	}
 
-	~LogContextAbstract() {
+	~LogContextCommon() {
 	}
-
 
 	const char* getDescription() {
 		return m_description;
@@ -83,8 +68,8 @@ public:
 
 };
 
-class LogDataAbstract {
-public:
+struct LogDataAbstract {
+
 	LogDataAbstract(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
 		m_level = level;
 		m_fileName = fileName;

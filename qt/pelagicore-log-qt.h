@@ -4,6 +4,8 @@
 #include <QDebug>
 
 #include "pelagicore-log.h"
+#include "log-console.h"
+#include "log-dlt.h"
 
 namespace pelagicore {
 
@@ -38,7 +40,6 @@ public:
 
 };
 
-#ifdef ENABLE_CONSOLE_LOGGING
 template<typename T>
 ConsoleLogData& operator<<(ConsoleLogData& data, const T& value) {
 	QString s;
@@ -47,7 +48,6 @@ ConsoleLogData& operator<<(ConsoleLogData& data, const T& value) {
 	data << s.toStdString().c_str();
 	return data;
 }
-#endif
 
 #ifdef ENABLE_DLT_LOGGING
 template<typename T>

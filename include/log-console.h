@@ -5,19 +5,7 @@
 #include "ByteArray.h"
 #include <mutex>
 
-#ifndef LOG_CONSOLE_PREFIX_FORMAT_STRING
-	#define LOG_CONSOLE_PREFIX_FORMAT_STRING "[%s] %.4s | "
-#endif
-#ifndef LOG_CONSOLE_SUFFIX_FORMAT_STRING
-	#define LOG_CONSOLE_SUFFIX_FORMAT_STRING "  %s / %s - %d"
-#endif
-
 namespace pelagicore {
-
-// If no severity is already specified, set it to debug
-#ifndef LOG_CONSOLE_SEVERITY
-#define LOG_CONSOLE_SEVERITY LogLevel::Debug
-#endif
 
 class ConsoleLogOutput {
 
@@ -54,7 +42,7 @@ public:
 	ConsoleLogContextAbstract() {
 	}
 
-	void setParentContext(LogContextAbstract& context) {
+	void setParentContext(LogContextCommon& context) {
 		m_context = &context;
 	}
 
@@ -65,7 +53,7 @@ public:
 	void registerContext() {
 	}
 
-	virtual FILE* getFile() = 0;
+	virtual FILE* getFile(ConsoleLogData& data) = 0;
 
 	bool isEnabled(LogLevel level) {
 		return (level <= m_level);
@@ -75,9 +63,9 @@ public:
 		m_level = level;
 	}
 
-	void write(const void* s) {
+	void write(const void* s, ConsoleLogData& data) {
 		std::lock_guard<std::mutex> lock(m_outputMutex);
-		auto file = getFile();
+		auto file = getFile(data);
 		if (file) {
 			fprintf(file, "%s\n", (const char*)s);
 			fflush(file);
@@ -88,23 +76,26 @@ public:
 		return m_colorsEnabled;
 	}
 
+	void setColorsEnabled(bool enabled) {
+		m_colorsEnabled = enabled;
+	}
+
+private:
 	std::mutex m_outputMutex;
-	LogContextAbstract* m_context = nullptr;
-	LogLevel m_level = LOG_CONSOLE_SEVERITY;
-	bool m_colorsEnabled = true;
+	LogContextCommon* m_context = nullptr;
+	LogLevel m_level = pelagicore::LogLevel::Debug;
+	bool m_colorsEnabled = false;
 };
 
 
 class ConsoleLogContext : public ConsoleLogContextAbstract {
 
 public:
-
-	FILE* getFile() override {
-		return m_file;
+	ConsoleLogContext() {
+		setColorsEnabled(true);
 	}
 
-private:
-	FILE* m_file = stdout;
+	FILE* getFile(ConsoleLogData& data) override ;
 
 };
 
@@ -125,14 +116,47 @@ public:
 	ConsoleLogData() {
 	}
 
+	~ConsoleLogData() {
+		// flush
+		if ( isEnabled() ) {
+			writeSuffix();
+
+			// add terminal null character
+			m_content.resize(m_content.size() + 1);
+			m_content[m_content.size() - 1] = 0;
+			m_context->write( m_content.getData(), *this );
+		}
+	}
+
+	void setPrefixFormat(const char* format) {
+		m_prefixFormat = format;
+	}
+
+	void setSuffixFormat(const char* format) {
+		m_suffixFormat = format;
+	}
+
 	void init(ConsoleLogContextAbstract& aContext, LogDataAbstract& data) {
 		m_context = &aContext;
 		m_data = &data;
 
-		if ( isEnabled() ) {
-			changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
-			writeFormatted( LOG_CONSOLE_PREFIX_FORMAT_STRING, getLogLevelString(m_data->m_level), aContext.getShortID() );
-		}
+		if ( isEnabled() )
+			writePrefix();
+
+	}
+
+	virtual void writePrefix() {
+		changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
+		writeFormatted( m_prefixFormat, getLogLevelString(m_data->m_level), getContext()->getShortID() );
+	}
+
+	virtual void writeSuffix() {
+		writeFormatted(m_suffixFormat, m_data->m_fileName, m_data->m_prettyFunction, m_data->m_lineNumber);
+		changeCurrentColor(Command::RESET, getColor(LogLevel::None), Color::BLACK);
+	}
+
+	ContextType* getContext() {
+		return m_context;
 	}
 
 	void changeCurrentColor(Command attr, Color fg, Color bg) {
@@ -165,22 +189,8 @@ public:
 		return c;
 	}
 
-	~ConsoleLogData() {
-		// flush
-		if ( isEnabled() ) {
-			writeFormatted(LOG_CONSOLE_SUFFIX_FORMAT_STRING, m_data->m_fileName, m_data->m_prettyFunction,
-				       m_data->m_lineNumber);
-			// add terminal null character
-			m_content.resize(m_content.size() + 1);
-			m_content[m_content.size() - 1] = 0;
-			changeCurrentColor(Command::RESET, getColor(LogLevel::None), Color::BLACK);
-			m_context->write( m_content.getData() );
-			//			fprintf(getFile(), "%s\n", m_content.getData());
-		}
-	}
-
 	bool isEnabled() {
-		return (m_data->m_level <= LOG_CONSOLE_SEVERITY);
+		return (m_context->isEnabled(m_data->m_level));
 	}
 
 	void write() {
@@ -192,6 +202,10 @@ public:
 			operator<<(firstArg);
 			write(remainingArguments ...);
 		}
+	}
+
+	LogDataAbstract& getData() {
+		return *m_data;
 	}
 
 	template<typename ... Args>
@@ -218,7 +232,17 @@ private:
 	ContextType* m_context;
 	ByteArray m_content;
 	LogDataAbstract* m_data = nullptr;
+
+	const char* m_prefixFormat = "[%s] %.4s | ";
+	const char* m_suffixFormat = "  %s / %s - %d";
 };
+
+inline FILE* ConsoleLogContext::getFile(ConsoleLogData& data) {
+	if (data.getData().m_level == LogLevel::Error)
+		return stderr;
+	else
+		return stdout;
+}
 
 inline ConsoleLogData& operator<<(ConsoleLogData& data, bool v) {
 	if ( data.isEnabled() )

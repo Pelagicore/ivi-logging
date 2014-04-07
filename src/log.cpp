@@ -27,7 +27,7 @@ int getThreadID() {
 	return __threadID.id;
 }
 
-void registerDefaultAPPIDSIfNeeded() {
+void setDefaultAPPIDSIfNeeded() {
 	if (s_pAppLogContext == nullptr) {
 		fprintf(
 			stderr,
