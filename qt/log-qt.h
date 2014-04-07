@@ -3,14 +3,12 @@
 #include <QtGlobal>
 #include <QDebug>
 
-#include "pelagicore-log.h"
-#include "log-console.h"
-#include "log-dlt.h"
+#include "plog.h"
 
-namespace pelagicore {
+namespace logging {
 
 /**
- * The constructor of this class registers a Qt log message handler which redirects logs to pelagicore logging
+ * The constructor of this class registers a Qt log message handler which redirects Qt logs to the logging framework
  */
 template<LogContext* context> class LogQtMessageHandler {
 

@@ -7,11 +7,13 @@
 #include "plog.h"
 #include <vector>
 #include <string>
+#include <type_traits>
 
-namespace pelagicore {
+namespace logging {
 
-template<typename ElementType>
-typename LogContext::LogData& operator<<(LogContext::LogData& log, const std::vector<ElementType>& v) {
+template<typename ElementType, class LogDataType = logging::LogDataAbstract, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataAbstract, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
 		log << element;
@@ -21,12 +23,16 @@ typename LogContext::LogData& operator<<(LogContext::LogData& log, const std::ve
 	return log;
 }
 
-inline LogContext::LogData& operator<<(LogContext::LogData& log, const void* v) {
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataAbstract, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const void* v) {
 	log << (size_t)v;
 	return log;
 }
 
-inline typename LogContext::LogData& operator<<(LogContext::LogData& log, const std::string& s) {
+template<typename LogDataType = logging::LogDataAbstract, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataAbstract, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const std::string& s) {
 	log << s.c_str();
 	return log;
 }

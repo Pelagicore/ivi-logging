@@ -30,7 +30,7 @@ The following requirements are fulfilled by that package:
 
 \section LogUsage Usage
 In order to start using the logging component from your application, you need to
-        \li Include the "pelagicore-log.h" header  // TODO : change header name
+        \li Include the "plog.h" header  // TODO : change header name
         \li Optionally define the 4 characters ID, which is going to be used especially by the DLT backend as application ID. This is achieved by using the following macro:
                 LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use logging API");
         \li Declare at least one logging context by using the following macro:

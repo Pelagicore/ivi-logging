@@ -1,8 +1,14 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-set(PACKAGE pelagicore-logging)
+set(PACKAGE plog)
 PROJECT(${PACKAGE})
+
+SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
+SET( ${PROJECT_NAME}_MINOR_VERSION 9 )
+SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
+
+set(VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_LEVEL})
 
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
@@ -49,7 +55,7 @@ set(INCLUDE_FILES
 
 set(INCLUDE_FILES
 	${INCLUDE_FILES}
-	qt/pelagicore-log-qt.h
+	qt/log-qt.h
 )
 
 
@@ -61,29 +67,29 @@ if (${DLT_FOUND})
 endif()
 
 
-install(FILES ${INCLUDE_FILES} DESTINATION include/pelagicore-logging)
+install(FILES ${INCLUDE_FILES} DESTINATION include/plog)
 
 
-add_library( pelagicore-logging SHARED
+add_library( plog SHARED
 	src/log.cpp
 	${DLT_LIBRARY_FILES}
 )
 
-set_target_properties(pelagicore-logging PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
+set_target_properties(plog PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
 
-TARGET_LINK_LIBRARIES( pelagicore-logging
+TARGET_LINK_LIBRARIES( plog
    ${DLT_LIBRARIES}
    ${CPP_LIBS}
 )
 
-INSTALL(TARGETS pelagicore-logging
+INSTALL(TARGETS plog
   DESTINATION lib
 )
 
-install(FILES PelagicoreLoggingConfig.cmake DESTINATION lib/cmake/PelagicoreLogging)
+install(FILES PLogConfig.cmake DESTINATION lib/cmake/PLog)
 
-configure_file(pelagicore-logging.pc.in pelagicore-logging.pc)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pelagicore-logging.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+configure_file(plog.pc.in plog.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plog.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
 
 
 add_subdirectory (examples)

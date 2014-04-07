@@ -5,7 +5,7 @@
 #include "ByteArray.h"
 #include <mutex>
 
-namespace pelagicore {
+namespace logging {
 
 class ConsoleLogOutput {
 
@@ -83,7 +83,7 @@ public:
 private:
 	std::mutex m_outputMutex;
 	LogContextCommon* m_context = nullptr;
-	LogLevel m_level = pelagicore::LogLevel::Debug;
+	LogLevel m_level = LogLevel::Debug;
 	bool m_colorsEnabled = false;
 };
 
@@ -95,7 +95,7 @@ public:
 		setColorsEnabled(true);
 	}
 
-	FILE* getFile(ConsoleLogData& data) override ;
+	FILE* getFile(ConsoleLogData& data) override;
 
 };
 
@@ -124,7 +124,7 @@ public:
 			// add terminal null character
 			m_content.resize(m_content.size() + 1);
 			m_content[m_content.size() - 1] = 0;
-			m_context->write( m_content.getData(), *this );
+			m_context->write(m_content.getData(), *this);
 		}
 	}
 
@@ -161,7 +161,7 @@ public:
 
 	void changeCurrentColor(Command attr, Color fg, Color bg) {
 		/* Command is the control command to the terminal */
-		if (m_context->colorsEnabled())
+		if ( m_context->colorsEnabled() )
 			writeFormatted("%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30, static_cast<int>(bg) + 40);
 	}
 
@@ -190,7 +190,7 @@ public:
 	}
 
 	bool isEnabled() {
-		return (m_context->isEnabled(m_data->m_level));
+		return ( m_context->isEnabled(m_data->m_level) );
 	}
 
 	void write() {

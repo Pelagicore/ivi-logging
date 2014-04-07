@@ -2,9 +2,10 @@
 #include <unistd.h>
 
 #include "log-types.h"
+#include <iostream>
 
 // Each executable needs to define its logging identifiers once
-LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use Pelagicore logging");
+LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use PLog");
 
 // Instantiate a log context and define it as default for this module
 LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAIN", "This is a description of that logging context");
@@ -18,7 +19,7 @@ struct MyClass {
 	LOG_DECLARE_CLASS_CONTEXT("CCTX", "This is a class-specific context");
 
 	void doSomething() {
-		log_debug("We are doing something"); // This log uses the class log context
+		log_debug() << "We are doing something"; // This log uses the class log context
 	}
 
 };
@@ -29,8 +30,8 @@ struct MySubClass : MyClass {
 	LOG_DECLARE_CLASS_CONTEXT("CCT2", "This is a class-specific context for our sub-class");
 
 	void doSomethingElse() {
-		log_debug("We are doing something else");
-		log_verbose("This is a verbose log");
+		log_debug() << "We are doing something else";
+		log_verbose() << "This is a verbose log";
 	}
 
 };
@@ -41,7 +42,7 @@ struct MyClassWithImportedContext {
 	LOG_SET_CLASS_CONTEXT(anotherContext);
 
 	void doSomething() {
-		log_debug("We are doing something. Imported context"); // This log uses the class log context
+		log_debug() << "We are doing something. Imported context"; // This log uses the class log context
 	}
 
 };
@@ -51,20 +52,22 @@ void myFunction() {
 	// Redefines the context to use for this scope (this function)
 	LOG_DECLARE_DEFAULT_LOCAL_CONTEXT("CXT3", "Function-specific logging context");
 
-	log_info("myFunction log 1");
-	log_warn("myFunction log 2");
+	log_info() << "myFunction log 1";
+	log_warn() << "myFunction log 2";
 
 }
 
 
 int main(int argc, const char** argv) {
 
-	log_error().writeFormatted("Another way to use the printf variant %i", 7345);
-	log_warn("Starting app");
+	log_warn() << "Starting app";
 
 	log_debug("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
+	log_error().writeFormatted("Another way to use the printf variant %i", 7345).writeFormatted(". Done");
+
 	log_error("This one is mixed. Here is a float : ") << 5.7F;
 	log_warn() << 5.7;
+	log_warn() << "Test string";
 
 	myFunction();
 
@@ -81,7 +84,7 @@ int main(int argc, const char** argv) {
 	for (char i = '0'; i <= '9'; i++)
 		charVector.push_back(i);
 
-	log_warn("This is a vector of chars : ") << charVector;
+	log_warn() << "This is a vector of chars : " << charVector;
 
 	sleep(1);
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <dirent.h>
 
-namespace pelagicore {
+namespace logging {
 
 AppLogContext* s_pAppLogContext = nullptr;
 

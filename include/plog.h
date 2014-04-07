@@ -6,7 +6,7 @@
 
 #include "log-common.h"
 
-namespace pelagicore {
+namespace logging {
 
 template<size_t I = 0, typename Func, typename ... TupleTypes, typename ... CallArgumentTypes>
 typename std::enable_if<I == sizeof ... (TupleTypes)>::type
@@ -23,7 +23,7 @@ for_each_in_tuple_(std::tuple<TupleTypes ...>& tpl, Func func, CallArgumentTypes
 
 inline std::string pointerToString(const void* p) {
 	char buffer[32];
-	sprintf(buffer, "0x%zX", (size_t) p);
+	snprintf(buffer, sizeof(buffer), "0x%zX", (size_t) p);
 	return buffer;
 }
 
@@ -31,10 +31,10 @@ int getThreadID();
 
 
 
-#define buildFormatString(format) format
+//#define buildFormatString(format) format
 
 #define log_with_context(context, severity, args ...) \
-	for (pelagicore::LogContext* dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
+	for (LogContext* dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
 		context.createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).writeFormatted(args)
 
 #ifndef log_error
@@ -42,39 +42,39 @@ int getThreadID();
 /**
  * Generate a log with "error" severity
  */
-#define log_error(args ...) log_with_context(getDefaultContext(), pelagicore::LogLevel::Error, ## args)
+#define log_error(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Error, ## args)
 
 /**
  * Generate a log with "verbose" severity
  */
-#define log_verbose(args ...) log_with_context(getDefaultContext(), pelagicore::LogLevel::Verbose, ## args)
+#define log_verbose(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Verbose, ## args)
 
 /**
  * Generate a log with "info" severity
  */
-#define log_info(args ...) log_with_context(getDefaultContext(), pelagicore::LogLevel::Info, ## args)
+#define log_info(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Info, ## args)
 
 /**
  * Generate a log with "warning" severity
  */
-#define log_warn(args ...) log_with_context(getDefaultContext(), pelagicore::LogLevel::Warning, ## args)
+#define log_warn(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Warning, ## args)
 #define log_warning(args ...) log_warn(args)
 
 /**
  * Generate a log with "debug" severity
  */
-#define log_debug(args ...) log_with_context(getDefaultContext(), pelagicore::LogLevel::Debug, ## args)
+#define log_debug(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Debug, ## args)
 
 /**
  * Defines the identifiers of an application. This macro should be used exactly at one place in every application
  */
 #define LOG_DEFINE_APP_IDS(appID, appDescription) \
-	pelagicore::AppLogContext s_appLogContext(appID, appDescription);
+	logging::AppLogContext s_appLogContext(appID, appDescription);
 
 /**
  * Create a LogContext with the given ID (4 characters in case of DLT support) and description
  */
-#define LOG_DECLARE_CONTEXT(contextName, contextShortID, contextDescription) pelagicore::LogContext contextName( \
+#define LOG_DECLARE_CONTEXT(contextName, contextShortID, contextDescription) LogContext contextName( \
 		contextShortID,	\
 		contextDescription);
 
@@ -88,13 +88,13 @@ int getThreadID();
 /**
  * Import the given context, which should exported by another module
  */
-#define LOG_IMPORT_CONTEXT(contextName) extern pelagicore::LogContext contextName;
+#define LOG_IMPORT_CONTEXT(contextName) extern LogContext contextName;
 
 /**
  * Set the given context as default for the current scope
  */
-#define LOG_SET_DEFAULT_CONTEXT(context) static std::function<pelagicore::LogContext& ()> getDefaultContext = \
-	[] ()->pelagicore::LogContext & {return context; };
+#define LOG_SET_DEFAULT_CONTEXT(context) static std::function<LogContext& ()> getDefaultContext = \
+	[] ()->LogContext & {return context; };
 
 /**
  * Import the given context and set it as default for the current scope
@@ -104,14 +104,14 @@ int getThreadID();
 /**
  * Set the given context as default for the current class
  */
-#define LOG_SET_CLASS_CONTEXT(context) static inline pelagicore::LogContext & getDefaultContext() {return context; }
+#define LOG_SET_CLASS_CONTEXT(context) static inline LogContext &getDefaultContext() {return context; }
 
 /**
  *
  */
 #define LOG_DECLARE_DEFAULT_LOCAL_CONTEXT(contextShortID, contextDescription) \
-	std::function<pelagicore::LogContext& ()> getDefaultContext = [] ()->pelagicore::LogContext & {	\
-		static pelagicore::LogContext __defaultContext(contextShortID, contextDescription); \
+	std::function<LogContext& ()> getDefaultContext = [] ()->LogContext & {	 \
+		static LogContext __defaultContext(contextShortID, contextDescription);	\
 		return __defaultContext; \
 	}
 
@@ -119,8 +119,8 @@ int getThreadID();
  *
  */
 #define LOG_DECLARE_CLASS_CONTEXT(contextShortID, contextDescription) \
-	static pelagicore::LogContext & getDefaultContext() { \
-		static pelagicore::LogContext __defaultLogContext(contextShortID, contextDescription); \
+	static LogContext &getDefaultContext() { \
+		static LogContext __defaultLogContext(contextShortID, contextDescription); \
 		return __defaultLogContext; \
 	}
 
@@ -132,11 +132,7 @@ int getThreadID();
 #endif
 
 template<typename ... Types>
-struct Input {
-};
-
-template<typename ... Types>
-struct Output {
+struct TypeSet {
 };
 
 template<class, class> class LogContextT;
@@ -275,3 +271,5 @@ public:
 
 };
 }
+
+#include "log-types.h"

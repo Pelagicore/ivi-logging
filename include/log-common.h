@@ -4,7 +4,7 @@
 #include <string>
 #include <string.h>
 
-namespace pelagicore {
+namespace logging {
 
 #define LOGGING_WARNING_OUTPUT_PREFIX "Logging: "
 

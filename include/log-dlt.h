@@ -5,7 +5,7 @@
 #include "assert.h"
 #include <map>
 
-namespace pelagicore {
+namespace logging {
 
 class DltLogData;
 
@@ -47,9 +47,9 @@ public:
 		if ( !isAppRegistered() ) {
 			DltRegisterApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
 		}
-//		auto code =
-			dlt_register_context( this, m_context->getID(), m_context->getDescription() );
-//		assert(code == 0);
+		//		auto code =
+		dlt_register_context( this, m_context->getID(), m_context->getDescription() );
+		//		assert(code == 0);
 		//		m_isInitialized = true;
 		//	}
 
@@ -104,8 +104,8 @@ public:
 			if (m_data->m_lineNumber != -1) dlt_user_log_write_uint32(this, m_data->m_lineNumber);
 			if (m_data->m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this, m_data->m_prettyFunction);
 
-//			auto r =
-					dlt_user_log_write_finish(this);
+			//			auto r =
+			dlt_user_log_write_finish(this);
 			//			assert(r==0);
 		}
 	}

@@ -2,6 +2,9 @@
 
 #include "log-console.h"
 
-namespace pelagicore {
-	typedef ConsoleLogContextAbstract FileLogContext;
+namespace logging {
+
+class FileLogContext : public ConsoleLogContextAbstract {
+};
+
 }

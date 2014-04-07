@@ -5,7 +5,7 @@
 #include <string.h>
 #include <assert.h>
 
-namespace pelagicore {
+namespace logging {
 
 std::string byteArrayToString(const void* buffer, size_t length);
 

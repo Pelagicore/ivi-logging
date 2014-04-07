@@ -8,14 +8,14 @@ struct MyClass2 {
 	LOG_SET_CLASS_CONTEXT(anotherContext);
 
 	void doSomething() {
-		log_debug("We are doing something in an other file"); // This log uses the class log context
+		log_debug() << "We are doing something in an other file"; // This log uses the class log context
 	}
 
 };
 
 void myFunction2() {
 
-	log_info("Using this file's default context");
+	log_info() << "Using this file's default context";
 
 	MyClass2 o;
 	o.doSomething();
