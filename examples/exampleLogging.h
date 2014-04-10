@@ -13,15 +13,17 @@
  * We define our actual LogContext type, which will be used when calling the log macros
  */
 typedef logging::LogContextT<
-	logging::TypeSet<logging::ConsoleLogContext
+	logging::TypeSet<
+		logging::ConsoleLogContext,
 #ifdef ENABLE_DLT_LOGGING
-			 , logging::DltContextClass
+		logging::DltContextClass
 #endif
-			 >, logging::TypeSet<logging::ConsoleLogContext::LogDataType
+		>, logging::TypeSet<
+		logging::ConsoleLogContext::LogDataType,
 #ifdef ENABLE_DLT_LOGGING
-					     , logging::DltContextClass::LogDataType
+		logging::DltContextClass::LogDataType
 #endif
-					     > > LogContext;
+		> > LogContext;
 
 
 // Import the application's contexts so that they can be used in any file which includes this header

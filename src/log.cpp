@@ -33,13 +33,16 @@ void setDefaultAPPIDSIfNeeded() {
 			stderr,
 			LOGGING_WARNING_OUTPUT_PREFIX
 			"Your application should define its ID using the LOG_DEFINE_APP_IDS macro\n");
-		char pid[5];
-		snprintf( pid, sizeof(pid), "%i", getpid() );
+		pid_t pid = getpid();
+		char pidAsHex[5];
+		snprintf(pidAsHex, sizeof(pidAsHex), "%X", pid);
+		char pidAsDecimal[6];
+		snprintf(pidAsDecimal, sizeof(pidAsDecimal), "%i", pid);
 		std::string processName = "PID:";
-		processName += pid;
+		processName += pidAsDecimal;
 		processName += " / ";
-		processName += getProcessName( getpid() );
-		s_pAppLogContext = new AppLogContext( pid, processName.c_str() );
+		processName += getProcessName(pid);
+		s_pAppLogContext = new AppLogContext( pidAsHex, processName.c_str() );
 	}
 }
 

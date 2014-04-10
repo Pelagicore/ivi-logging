@@ -50,6 +50,7 @@ set(INCLUDE_FILES
 	include/log-console.h
 	include/log-file.h
 	include/log-common.h
+	include/log-null.h
 	include/ByteArray.h
 )
 

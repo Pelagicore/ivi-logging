@@ -11,8 +11,8 @@
 
 namespace logging {
 
-template<typename ElementType, class LogDataType = logging::LogDataAbstract, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataAbstract, LogDataType>::value>::type>
+template<typename ElementType, class LogDataType = logging::LogDataCommon, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
@@ -24,14 +24,14 @@ LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 }
 
 template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataAbstract, LogDataType>::value>::type>
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const void* v) {
 	log << (size_t)v;
 	return log;
 }
 
-template<typename LogDataType = logging::LogDataAbstract, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataAbstract, LogDataType>::value>::type>
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::string& s) {
 	log << s.c_str();
 	return log;

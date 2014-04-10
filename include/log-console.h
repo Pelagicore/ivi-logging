@@ -7,32 +7,6 @@
 
 namespace logging {
 
-class ConsoleLogOutput {
-
-public:
-	ConsoleLogOutput(FILE* file) {
-		m_file = file;
-	}
-
-	ConsoleLogOutput(const char* path) {
-		m_file = fopen(path, "w");
-		m_path = path;
-	}
-
-	FILE* getFile() {
-		return m_file;
-	}
-
-	const char* getPath() {
-		return m_path.c_str();
-	}
-
-private:
-	FILE* m_file;
-	std::string m_path;
-
-};
-
 class ConsoleLogData;
 
 class ConsoleLogContextAbstract {
@@ -136,7 +110,7 @@ public:
 		m_suffixFormat = format;
 	}
 
-	void init(ConsoleLogContextAbstract& aContext, LogDataAbstract& data) {
+	void init(ConsoleLogContextAbstract& aContext, LogDataCommon& data) {
 		m_context = &aContext;
 		m_data = &data;
 
@@ -204,7 +178,7 @@ public:
 		}
 	}
 
-	LogDataAbstract& getData() {
+	LogDataCommon& getData() {
 		return *m_data;
 	}
 
@@ -231,7 +205,7 @@ public:
 private:
 	ContextType* m_context;
 	ByteArray m_content;
-	LogDataAbstract* m_data = nullptr;
+	LogDataCommon* m_data = nullptr;
 
 	const char* m_prefixFormat = "[%s] %.4s | ";
 	const char* m_suffixFormat = "  %s / %s - %d";

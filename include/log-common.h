@@ -68,9 +68,9 @@ public:
 
 };
 
-struct LogDataAbstract {
+struct LogDataCommon {
 
-	LogDataAbstract(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
+	LogDataCommon(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
 		m_level = level;
 		m_fileName = fileName;
 		m_lineNumber = lineNumber;

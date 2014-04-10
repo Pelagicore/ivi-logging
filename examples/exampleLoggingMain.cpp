@@ -13,6 +13,17 @@ LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAIN", "This is a description of that 
 // Instantiate another context which can be used instead of the previous one if specified
 LOG_DECLARE_CONTEXT(anotherContext, "CXT2", "Another context");
 
+namespace MyNamespace {
+
+// Instantiate a log context and define it as default for this module
+LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAI2", "This is a description of that logging context");
+
+void MyFunction() {
+	log_info() << "My function called";
+}
+
+}
+
 struct MyClass {
 
 	// Define the log context to be used for that class. This overrides any default context which might have previously be set
@@ -57,10 +68,7 @@ void myFunction() {
 
 }
 
-
 int main(int argc, const char** argv) {
-
-	log_warn() << "Starting app";
 
 	log_debug("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
 	log_error().writeFormatted("Another way to use the printf variant %i", 7345).writeFormatted(". Done");
@@ -86,6 +94,8 @@ int main(int argc, const char** argv) {
 
 	log_warn() << "This is a vector of chars : " << charVector;
 
-	sleep(1);
+	MyNamespace::MyFunction();
+
+	//	sleep(1000);
 
 }

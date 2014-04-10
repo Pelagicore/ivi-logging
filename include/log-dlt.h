@@ -45,7 +45,7 @@ public:
 
 	void registerContext() {
 		if ( !isAppRegistered() ) {
-			DltRegisterApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
+			registerApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
 		}
 		//		auto code =
 		dlt_register_context( this, m_context->getID(), m_context->getDescription() );
@@ -60,8 +60,22 @@ public:
 		return m_appRegistered;
 	}
 
-	static void DltRegisterApp(const char* id, const char* description) {
-		dlt_register_app(id, description);
+	/**
+	 * Register the application.
+	 */
+	static void registerApp(const char* id, const char* description) {
+		pid_t pid = getpid();
+		char descriptionWithPID[1024];
+		snprintf(descriptionWithPID, sizeof(descriptionWithPID), "PID:%i / %s", pid, description);
+
+		auto dltCode = dlt_register_app(id, descriptionWithPID);
+
+		// TODO : The piece of code below would be useful if the DLT library didn't always return 0
+		if (dltCode != 0 ) {
+			char pidAsHexString[5];
+			snprintf(pidAsHexString, sizeof(pidAsHexString), "%X", pid);
+			dltCode = dlt_register_app(pidAsHexString, descriptionWithPID);
+		}
 		isAppRegistered() = true;
 	}
 
@@ -92,17 +106,24 @@ public:
 	DltLogData() {
 	}
 
-	void init(DltContextClass& aContext, LogDataAbstract& data) {
+	void setEnableSourceCodeLocationInfo(bool enabled) {
+		m_enableSourceCodeLocationInfo = enabled;
+	}
+
+	void init(DltContextClass& context, LogDataCommon& data) {
 		m_data = &data;
-		context = &aContext;
-		enabled = dlt_user_log_write_start( context, this, aContext.getDLTLogLevel(m_data->m_level) );
+		m_context = &context;
+		m_enabled = dlt_user_log_write_start( m_context, this, m_context->getDLTLogLevel(m_data->m_level) );
 	}
 
 	~DltLogData() {
-		if (enabled) {
-			if (m_data->m_fileName != NULL) dlt_user_log_write_utf8_string(this, m_data->m_fileName);
-			if (m_data->m_lineNumber != -1) dlt_user_log_write_uint32(this, m_data->m_lineNumber);
-			if (m_data->m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this, m_data->m_prettyFunction);
+		if (m_enabled) {
+			if (m_enableSourceCodeLocationInfo) {
+				if (m_data->m_fileName != NULL) dlt_user_log_write_utf8_string(this, m_data->m_fileName);
+				if (m_data->m_lineNumber != -1) dlt_user_log_write_uint32(this, m_data->m_lineNumber);
+				if (m_data->m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this,
+												     m_data->m_prettyFunction);
+			}
 
 			//			auto r =
 			dlt_user_log_write_finish(this);
@@ -111,16 +132,16 @@ public:
 	}
 
 	bool isEnabled() {
-		return enabled;
+		return m_enabled;
 	}
 
-	void writeFormatString(const char* v) {
-		dlt_user_log_write_utf8_string(this, v);
-	}
+	//	void writeFormatString(const char* v) {
+	//		dlt_user_log_write_utf8_string(this, v);
+	//	}
 
 	template<typename ... Args>
 	void writeFormatted(const char* format, Args ... args) {
-		if (enabled) {
+		if (m_enabled) {
 			char b[65536];
 
 #pragma GCC diagnostic push
@@ -134,9 +155,10 @@ public:
 	}
 
 private:
-	bool enabled;
-	DltContextClass* context;
-	LogDataAbstract* m_data = nullptr;
+	DltContextClass* m_context;
+	LogDataCommon* m_data = nullptr;
+	bool m_enableSourceCodeLocationInfo = true;
+	bool m_enabled;
 
 };
 

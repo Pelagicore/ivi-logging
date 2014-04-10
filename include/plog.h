@@ -177,7 +177,7 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 		void operator()(T && t,
 				LogContextT<ContextTypesClass<ContextTypes ...>,
 					    ContextDataTypesClass<LogDataTypes ...> >& context,
-				LogDataAbstract& log) {
+				LogDataCommon& log) {
 			t.init(context, log);
 		}
 	};
@@ -190,7 +190,7 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 	};
 
 public:
-	class LogData : LogDataAbstract {
+	class LogData : LogDataCommon {
 
 		template<size_t I = 0, typename ... CallArgumentTypes>
 		typename std::enable_if<I == sizeof ... (ContextTypes)>::type
@@ -213,7 +213,7 @@ public:
 				    ContextDataTypesClass<LogDataTypes ...> >& context, LogLevel level, const char* fileName,
 			int lineNumber,
 			const char* prettyFunction) :
-			LogDataAbstract(level, fileName, lineNumber, prettyFunction) {
+			LogDataCommon(level, fileName, lineNumber, prettyFunction) {
 			for_each_init(m_contexts, context, *this);
 		}
 
