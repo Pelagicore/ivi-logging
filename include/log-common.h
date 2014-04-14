@@ -9,7 +9,7 @@ namespace logging {
 #define LOGGING_WARNING_OUTPUT_PREFIX "Logging: "
 
 enum class LogLevel {
-	None, Error, Warning, Info, Debug, Verbose
+	None, Error, Warning, Info, Debug, Verbose, All
 };
 
 struct AppLogContext;

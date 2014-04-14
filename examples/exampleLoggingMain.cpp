@@ -96,6 +96,9 @@ int main(int argc, const char** argv) {
 
 	MyNamespace::MyFunction();
 
+	disableConsoleLogging();
+	log_error() << "This log should not visible in the console";
+
 	//	sleep(1000);
 
 }

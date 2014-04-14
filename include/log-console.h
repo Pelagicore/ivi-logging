@@ -29,12 +29,16 @@ public:
 
 	virtual FILE* getFile(ConsoleLogData& data) = 0;
 
-	bool isEnabled(LogLevel level) {
-		return (level <= m_level);
-	}
-
 	void setLogLevel(LogLevel level) {
 		m_level = level;
+	}
+
+	LogLevel getLogLevel() {
+		return  m_level;
+	}
+
+	virtual bool isEnabled(LogLevel level) {
+		return (level <= getLogLevel());
 	}
 
 	void write(const void* s, ConsoleLogData& data) {
@@ -61,7 +65,9 @@ private:
 	bool m_colorsEnabled = false;
 };
 
-
+/**
+ * Context for logging to the console
+ */
 class ConsoleLogContext : public ConsoleLogContextAbstract {
 
 public:
@@ -69,8 +75,24 @@ public:
 		setColorsEnabled(true);
 	}
 
+	bool isEnabled(LogLevel level) override {
+		return (ConsoleLogContextAbstract::isEnabled(level) && (level <= s_defaultLogLevel));
+	}
+
+	/**
+	 * Sets the global log level for the logging to the console
+	 * By setting that log level to "None", you ensure that no log will be sent to the console
+	 * By setting that log level to "All" (default value), you disable the effect of the global filtering, which means
+	 * that only the log levels of the individual contexts will be taken into account.
+	 */
+	static void setGlobalLogLevel(LogLevel level) {
+		s_defaultLogLevel = level;
+	}
+
+private:
 	FILE* getFile(ConsoleLogData& data) override;
 
+	static LogLevel s_defaultLogLevel;
 };
 
 
@@ -121,7 +143,7 @@ public:
 
 	virtual void writePrefix() {
 		changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
-		writeFormatted( m_prefixFormat, getLogLevelString(m_data->m_level), getContext()->getShortID() );
+		writeFormatted( m_prefixFormat, getContext()->getShortID(), getLogLevelString(m_data->m_level) );
 	}
 
 	virtual void writeSuffix() {
@@ -207,7 +229,7 @@ private:
 	ByteArray m_content;
 	LogDataCommon* m_data = nullptr;
 
-	const char* m_prefixFormat = "[%s] %.4s | ";
+	const char* m_prefixFormat = "%.4s [%s] ";
 	const char* m_suffixFormat = "  %s / %s - %d";
 };
 

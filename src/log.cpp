@@ -8,6 +8,8 @@ namespace logging {
 
 AppLogContext* s_pAppLogContext = nullptr;
 
+LogLevel ConsoleLogContext::s_defaultLogLevel = LogLevel::All;
+
 struct ThreadInformation {
 
 	ThreadInformation() {
