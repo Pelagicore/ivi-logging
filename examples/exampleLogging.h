@@ -2,8 +2,6 @@
 
 #include "plog.h"
 
-#undef ENABLE_DLT_LOGGING
-
 #ifdef ENABLE_DLT_LOGGING
 #include "log-dlt.h"
 #endif
