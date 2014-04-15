@@ -40,6 +40,11 @@ int getThreadID();
 #ifndef log_error
 
 /**
+ * Generate a log with "fatal" severity
+ */
+#define log_fatal(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Fatal, ## args)
+
+/**
  * Generate a log with "error" severity
  */
 #define log_error(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Error, ## args)
@@ -66,7 +71,7 @@ int getThreadID();
 #define log_debug(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Debug, ## args)
 
 /**
- * Defines the identifiers of an application. This macro should be used exactly at one place in every application
+ * Defines the identifiers of an application. This macro should be used at one place in every application.
  */
 #define LOG_DEFINE_APP_IDS(appID, appDescription) \
 	logging::AppLogContext s_appLogContext(appID, appDescription);
@@ -116,7 +121,7 @@ int getThreadID();
 	}
 
 /**
- *
+ * Set a new context as default context for a class. To be used inside the class definition.
  */
 #define LOG_DECLARE_CLASS_CONTEXT(contextShortID, contextDescription) \
 	static LogContext &getDefaultContext() { \

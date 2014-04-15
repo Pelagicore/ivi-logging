@@ -2,6 +2,8 @@
 
 #include "plog.h"
 
+#undef ENABLE_DLT_LOGGING
+
 #ifdef ENABLE_DLT_LOGGING
 #include "log-dlt.h"
 #endif
@@ -14,14 +16,14 @@
  */
 typedef logging::LogContextT<
 	logging::TypeSet<
-		logging::ConsoleLogContext,
+		logging::ConsoleLogContext
 #ifdef ENABLE_DLT_LOGGING
-		logging::DltContextClass
+		, logging::DltContextClass
 #endif
 		>, logging::TypeSet<
-		logging::ConsoleLogContext::LogDataType,
+		logging::ConsoleLogContext::LogDataType
 #ifdef ENABLE_DLT_LOGGING
-		logging::DltContextClass::LogDataType
+		,logging::DltContextClass::LogDataType
 #endif
 		> > LogContext;
 

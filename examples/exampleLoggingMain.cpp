@@ -38,7 +38,7 @@ struct MyClass {
 struct MySubClass : MyClass {
 
 	// Define the log context to be used for that class. This overrides any default context which might have previously be set
-	LOG_DECLARE_CLASS_CONTEXT("CCT2", "This is a class-specific context for our sub-class");
+	LOG_DECLARE_CLASS_CONTEXT("CC", "This is a class-specific context for our sub-class");
 
 	void doSomethingElse() {
 		log_debug() << "We are doing something else";
@@ -95,6 +95,8 @@ int main(int argc, const char** argv) {
 	log_warn() << "This is a vector of chars : " << charVector;
 
 	MyNamespace::MyFunction();
+
+	log_fatal() << "A fatal log";
 
 	disableConsoleLogging();
 	log_error() << "This log should not visible in the console";

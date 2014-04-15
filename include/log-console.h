@@ -89,8 +89,9 @@ public:
 		s_defaultLogLevel = level;
 	}
 
-private:
 	FILE* getFile(ConsoleLogData& data) override;
+
+private:
 
 	static LogLevel s_defaultLogLevel;
 };
@@ -164,10 +165,11 @@ public:
 	static const char* getLogLevelString(LogLevel logLevel) {
 		const char* v = "";
 		switch (logLevel) {
-		case LogLevel::Debug : v = "Debug  "; break;
-		case LogLevel::Info : v = "Info   "; break;
+		case LogLevel::Debug : v = " Debug "; break;
+		case LogLevel::Info : v = " Info  "; break;
 		case LogLevel::Warning : v = "Warning"; break;
-		case LogLevel::Error : v = "Error  "; break;
+		case LogLevel::Error : v = " Error "; break;
+		case LogLevel::Fatal : v = " Fatal "; break;
 		case LogLevel::Verbose : v = "Verbose"; break;
 		default : v = "unknown"; break;
 		}
@@ -229,7 +231,7 @@ private:
 	ByteArray m_content;
 	LogDataCommon* m_data = nullptr;
 
-	const char* m_prefixFormat = "%.4s [%s] ";
+	const char* m_prefixFormat = "%4.4s [%s] ";
 	const char* m_suffixFormat = "  %s / %s - %d";
 };
 

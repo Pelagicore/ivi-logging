@@ -35,10 +35,11 @@ public:
 		case LogLevel::Debug : v = DLT_LOG_DEBUG; break;
 		case LogLevel::Info : v = DLT_LOG_INFO; break;
 		case LogLevel::Warning : v = DLT_LOG_WARN; break;
+		case LogLevel::Fatal : v = DLT_LOG_FATAL; break;
 		case LogLevel::Error : v = DLT_LOG_ERROR; break;
 		case LogLevel::Verbose : v = DLT_LOG_VERBOSE; break;
 		case LogLevel::None : v = DLT_LOG_OFF; break;
-			//		default : v = DLT_LOG_DEFAULT; break;
+		default : v = DLT_LOG_DEFAULT; break;
 		}
 		return v;
 	}
