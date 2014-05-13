@@ -38,13 +38,13 @@ void setDefaultAPPIDSIfNeeded() {
 		pid_t pid = getpid();
 		char pidAsHex[5];
 		snprintf(pidAsHex, sizeof(pidAsHex), "%X", pid);
-		char pidAsDecimal[6];
-		snprintf(pidAsDecimal, sizeof(pidAsDecimal), "%i", pid);
-		std::string processName = "PID:";
-		processName += pidAsDecimal;
-		processName += " / ";
-		processName += getProcessName(pid);
-		s_pAppLogContext = new AppLogContext( pidAsHex, processName.c_str() );
+//		char pidAsDecimal[6];
+//		snprintf(pidAsDecimal, sizeof(pidAsDecimal), "%i", pid);
+//		std::string processName = "PID:";
+//		processName += pidAsDecimal;
+//		processName += " / ";
+//		std::string processName = getProcessName(pid);
+		s_pAppLogContext = new AppLogContext( pidAsHex, getProcessName(pid).c_str() );
 	}
 }
 

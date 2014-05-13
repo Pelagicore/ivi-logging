@@ -4,7 +4,7 @@
 #include "log-types.h"
 #include <iostream>
 
-// Each executable needs to define its logging identifiers once
+// If an application is not multi-instance, it can define its identifiers
 LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use PLog");
 
 // Instantiate a log context and define it as default for this module
@@ -16,7 +16,7 @@ LOG_DECLARE_CONTEXT(anotherContext, "CXT2", "Another context");
 namespace MyNamespace {
 
 // Instantiate a log context and define it as default for this module
-LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAI2", "This is a description of that logging context");
+LOG_DECLARE_DEFAULT_CONTEXT(anotherContext, "MAI2", "This is a description of that logging context");
 
 void MyFunction() {
 	log_info() << "My function called";

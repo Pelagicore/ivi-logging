@@ -8,7 +8,4 @@ Description: Logging
 Version: @VERSION@
 Requires: glib-2.0 @ADDITIONAL_PKGCONFIG_DEPENDENCIES@
 Libs: -L${libdir} -lplog
-Cflags: -I${includedir}/plog @ADDITIONAL_PKGCONFIG_CFLAGS@ 
-
-# TODO : check whether this works
-Cxxflags: -std=c++11
+Cflags: -std=c++11 -I${includedir}/plog @ADDITIONAL_PKGCONFIG_CFLAGS@ 
