@@ -41,11 +41,11 @@ public:
 		return (level <= getLogLevel());
 	}
 
-	void write(const void* s, ConsoleLogData& data) {
+	void write(const char* s, ConsoleLogData& data) {
 		std::lock_guard<std::mutex> lock(m_outputMutex);
 		auto file = getFile(data);
 		if (file) {
-			fprintf(file, "%s\n", (const char*)s);
+			fprintf(file, "%s", s);
 			fflush(file);
 		}
 	}
@@ -59,7 +59,7 @@ public:
 	}
 
 private:
-	std::mutex m_outputMutex;
+	static std::mutex m_outputMutex;
 	LogContextCommon* m_context = nullptr;
 	LogLevel m_level = LogLevel::Debug;
 	bool m_colorsEnabled = false;
@@ -108,6 +108,12 @@ class ConsoleLogData {
 	};
 
 public:
+
+	static constexpr const char* DEFAULT_PREFIX = "%4.4s [%s] ";
+
+	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = "  %s / %s - %d\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION = "\n";
+
 	typedef ConsoleLogContextAbstract ContextType;
 
 	ConsoleLogData() {
@@ -121,7 +127,7 @@ public:
 			// add terminal null character
 			m_content.resize(m_content.size() + 1);
 			m_content[m_content.size() - 1] = 0;
-			m_context->write(m_content.getData(), *this);
+			m_context->write((char*)m_content.getData(), *this);
 		}
 	}
 
@@ -231,8 +237,8 @@ private:
 	ByteArray m_content;
 	LogDataCommon* m_data = nullptr;
 
-	const char* m_prefixFormat = "%4.4s [%s] ";
-	const char* m_suffixFormat = "  %s / %s - %d";
+	const char* m_prefixFormat = DEFAULT_PREFIX;
+	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
 };
 
 inline FILE* ConsoleLogContext::getFile(ConsoleLogData& data) {

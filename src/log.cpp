@@ -10,6 +10,8 @@ AppLogContext* s_pAppLogContext = nullptr;
 
 LogLevel ConsoleLogContext::s_defaultLogLevel = LogLevel::All;
 
+std::mutex ConsoleLogContextAbstract::m_outputMutex;
+
 struct ThreadInformation {
 
 	ThreadInformation() {
