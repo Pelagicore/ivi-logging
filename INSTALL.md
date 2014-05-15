@@ -11,6 +11,8 @@ On Ubuntu or debian, those dependencies can be installed with the following comm
 	$ sudo apt-get install cmake pkg-config g++
 
 If you want support for the DLT, that package needs to be installed : http://projects.genivi.org/diagnostic-log-trace/download
+Note that a mistake in DLT's pkg-config file brings a dependency to "libz", which you have to install as well:
+	$ sudo apt-get install libz-dev
 
 Build
 -----
