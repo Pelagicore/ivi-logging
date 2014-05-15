@@ -114,7 +114,13 @@ public:
 	void init(DltContextClass& context, LogDataCommon& data) {
 		m_data = &data;
 		m_context = &context;
-		m_enabled = dlt_user_log_write_start( m_context, this, m_context->getDLTLogLevel(m_data->m_level) );
+		auto dltLogLevel = m_context->getDLTLogLevel(m_data->m_level);
+
+		m_enabled = ((m_context)->log_level_ptr && ((dltLogLevel)<=(int)*((m_context)->log_level_ptr) ) &&
+				((dltLogLevel)!=0));  // TODO: get that expression from the DLT itself
+
+		if (m_enabled)
+			dlt_user_log_write_start( m_context, this, dltLogLevel );
 	}
 
 	~DltLogData() {
