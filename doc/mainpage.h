@@ -1,6 +1,6 @@
 /**
 
-\mainpage Logging
+\mainpag Logging
 
 \section Introduction
 

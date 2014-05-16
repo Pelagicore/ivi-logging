@@ -33,10 +33,10 @@ int getThreadID() {
 
 void setDefaultAPPIDSIfNeeded() {
 	if (s_pAppLogContext == nullptr) {
-		fprintf(
-			stderr,
-			LOGGING_WARNING_OUTPUT_PREFIX
-			"Your application should define its ID using the LOG_DEFINE_APP_IDS macro\n");
+//		fprintf(
+//			stderr,
+//			LOGGING_WARNING_OUTPUT_PREFIX
+//			"Your application should define its ID using the LOG_DEFINE_APP_IDS macro\n");
 		pid_t pid = getpid();
 		char pidAsHex[5];
 		snprintf(pidAsHex, sizeof(pidAsHex), "%X", pid);

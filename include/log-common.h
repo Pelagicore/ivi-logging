@@ -24,7 +24,7 @@ struct AppLogContext {
 			fprintf(
 				stderr,
 				LOGGING_WARNING_OUTPUT_PREFIX
-				"Your application should not define its ID twice using LOG_DEFINE_APP_IDS macro\n");
+				"An ID has already been defined for your application. Please ensure LOG_DEFINE_APP_IDS macro is called before any log is produced.\n");
 		}
 		s_pAppLogContext = this;
 	}
