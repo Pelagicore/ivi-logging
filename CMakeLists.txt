@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-set(PACKAGE ivi-log)
+set(PACKAGE ivi-logging)
 PROJECT(${PACKAGE})
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 1 )
@@ -40,8 +40,7 @@ include_directories(
 )
 
 set(INCLUDE_FILES
-	include/ivi-log.h
-	include/plog.h
+	include/ivi-logging.h
 	include/log-types.h
 	include/log-console.h
 	include/log-file.h
@@ -84,10 +83,10 @@ INSTALL(TARGETS ${LIB_NAME}
   DESTINATION lib
 )
 
-install(FILES IVILogConfig.cmake DESTINATION lib/cmake/IVILog)
+install(FILES IVILoggingConfig.cmake DESTINATION lib/cmake/IVILogging)
 
-configure_file(ivi-log.pc.in ivi-log.pc)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-log.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+configure_file(ivi-logging.pc.in ivi-logging.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-logging.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
 
 
 add_subdirectory (examples)

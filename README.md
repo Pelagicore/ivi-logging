@@ -4,8 +4,9 @@ Main Page			 {#mainpage}
 Introduction
 ------------
 
-This logging component provides a C++ abstract API, which enables your application to send logs either to the console, to 
-a file, or to the DLT, in a transparent way, without having to explicitly rely on the DLT API.
+IVI Logging is a tool to facilitate the use of Diagnostic Log and Trace (DLT) software, like that found in GENIVI. The logging 
+component provides a C++ API enabling you to send log data either to the console, to a file, or even to DLT transparently and 
+without having to rely on DLT.
 For more documentation about that software component, please refer to the doxygen documentation, which gets generated when
 building the package (see the file "INSTALL.md"). Open the file "doc/doxygen/html/index.html" from the build folder.
  
@@ -14,14 +15,21 @@ building the package (see the file "INSTALL.md"). Open the file "doc/doxygen/htm
 TODO
 ----
 
-- Implement SysLog backend
+- Implement SysLog backend ?
 
 
-Change log
+Changelog
 ----------
 
 \include ChangeLog.md
 
 
+License
+-------
+
+This software is Free Software licensed under the Mozilla Public License 2.0
+
+
 FAQ
 ---
+

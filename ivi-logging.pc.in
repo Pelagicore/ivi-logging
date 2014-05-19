@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: IVI Logging
+Description: IVI Logging
+Version: @VERSION@
+Requires: @ADDITIONAL_PKGCONFIG_DEPENDENCIES@
+Libs: -L${libdir} -livi-logging
+Cflags: -std=c++11 -I${includedir}/ivi-logging @ADDITIONAL_PKGCONFIG_CFLAGS@ 

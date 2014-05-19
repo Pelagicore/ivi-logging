@@ -46,4 +46,4 @@ macro(add_doxygen_doc packageName sourceCodePath examplesPath)
 endmacro()
 
 
-add_doxygen_doc(someip "${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR}/../README.md" "${CMAKE_CURRENT_SOURCE_DIR}/../examples ${CMAKE_CURRENT_SOURCE_DIR}/..")
+add_doxygen_doc(${PACKAGE} "${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR}/../README.md" "${CMAKE_CURRENT_SOURCE_DIR}/../examples ${CMAKE_CURRENT_SOURCE_DIR}/..")
