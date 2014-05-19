@@ -4,7 +4,7 @@
 #pragma once
 
 #include "log-common.h"
-#include "plog.h"
+#include "ivi-log.h"
 #include <vector>
 #include <string>
 #include <type_traits>

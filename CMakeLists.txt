@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-set(PACKAGE plog)
+set(PACKAGE ivi-log)
 PROJECT(${PACKAGE})
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 1 )
@@ -40,6 +40,7 @@ include_directories(
 )
 
 set(INCLUDE_FILES
+	include/ivi-log.h
 	include/plog.h
 	include/log-types.h
 	include/log-console.h
@@ -63,29 +64,30 @@ if (${DLT_FOUND})
 endif()
 
 
-install(FILES ${INCLUDE_FILES} DESTINATION include/plog)
+install(FILES ${INCLUDE_FILES} DESTINATION include/${PACKAGE})
 
+set(LIB_NAME ${PACKAGE})
 
-add_library( plog SHARED
+add_library( ${LIB_NAME} SHARED
 	src/log.cpp
 	${DLT_LIBRARY_FILES}
 )
 
-set_target_properties(plog PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
+set_target_properties(${LIB_NAME} PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
 
-TARGET_LINK_LIBRARIES( plog
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
    ${DLT_LIBRARIES}
    ${CPP_LIBS}
 )
 
-INSTALL(TARGETS plog
+INSTALL(TARGETS ${LIB_NAME}
   DESTINATION lib
 )
 
-install(FILES PLogConfig.cmake DESTINATION lib/cmake/PLog)
+install(FILES IVILogConfig.cmake DESTINATION lib/cmake/IVILog)
 
-configure_file(plog.pc.in plog.pc)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plog.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+configure_file(ivi-log.pc.in ivi-log.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-log.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
 
 
 add_subdirectory (examples)

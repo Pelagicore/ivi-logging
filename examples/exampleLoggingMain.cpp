@@ -4,8 +4,8 @@
 #include "log-types.h"
 #include <iostream>
 
-// If an application is not multi-instance, it can define its identifiers
-LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use PLog");
+// If an application is not multi-instance, we can define its unique identifier
+LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use IVI-Log");
 
 // Instantiate a log context and define it as default for this module
 LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAIN", "This is a description of that logging context");

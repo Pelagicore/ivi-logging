@@ -30,7 +30,7 @@ The following requirements are fulfilled by that package:
 
 \section LogUsage Usage
 In order to start using the logging component from your application, you need to:
-        \li Include the "plog.h" header  // TODO : change header name
+        \li Include the "ivi-log.h" header  // TODO : change header name
         \li Optionally define the 4 characters unique ID (if only one instance of your application is going to run), which is going to be used especially by the DLT backend as application ID. This is achieved by using the following macro:\n
                 LOG_DEFINE_APP_IDS("MyAp", "Description of my application");
         \li Declare at least one logging context by using the following macro:\n

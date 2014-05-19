@@ -1,6 +1,6 @@
 #pragma once
 
-#include "plog.h"
+#include "ivi-log.h"
 
 #ifdef ENABLE_DLT_LOGGING
 #include "log-dlt.h"

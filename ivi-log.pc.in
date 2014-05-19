@@ -7,5 +7,5 @@ Name: Logging
 Description: Logging
 Version: @VERSION@
 Requires: @ADDITIONAL_PKGCONFIG_DEPENDENCIES@
-Libs: -L${libdir} -lplog
-Cflags: -std=c++11 -I${includedir}/plog @ADDITIONAL_PKGCONFIG_CFLAGS@ 
+Libs: -L${libdir} -livi-log
+Cflags: -std=c++11 -I${includedir}/ivi-log @ADDITIONAL_PKGCONFIG_CFLAGS@ 

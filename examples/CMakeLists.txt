@@ -7,7 +7,7 @@ add_executable( logging-example
 )
 
 TARGET_LINK_LIBRARIES( logging-example
-	plog
+	${LIB_NAME}
 )
 
 install(TARGETS logging-example

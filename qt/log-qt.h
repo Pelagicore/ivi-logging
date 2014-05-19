@@ -3,7 +3,7 @@
 #include <QtGlobal>
 #include <QDebug>
 
-#include "plog.h"
+#include "ivi-log.h"
 
 namespace logging {
 
