@@ -1,6 +1,6 @@
 /**
 
-\mainpag Logging
+\mainpage Logging
 
 \section Introduction
 
@@ -59,6 +59,6 @@ See the following example to understand when each of these macro can be used.
 \li TODO
 
 \section ChangeLog Change log
-\include ChangeLog.txt
+\include ChangeLog.md
 
 */
