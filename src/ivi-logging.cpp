@@ -1,6 +1,6 @@
 #include "stdint.h"
 #include "stdio.h"
-#include "log-console.h"
+#include "ivi-logging-console.h"
 #include <string>
 #include <dirent.h>
 
@@ -10,7 +10,7 @@ AppLogContext* s_pAppLogContext = nullptr;
 
 LogLevel ConsoleLogContext::s_defaultLogLevel = LogLevel::All;
 
-std::mutex ConsoleLogContextAbstract::m_outputMutex;
+std::mutex StreamLogContextAbstract::m_outputMutex;
 
 struct ThreadInformation {
 
@@ -33,19 +33,19 @@ int getThreadID() {
 
 void setDefaultAPPIDSIfNeeded() {
 	if (s_pAppLogContext == nullptr) {
-//		fprintf(
-//			stderr,
-//			LOGGING_WARNING_OUTPUT_PREFIX
-//			"Your application should define its ID using the LOG_DEFINE_APP_IDS macro\n");
+		//		fprintf(
+		//			stderr,
+		//			LOGGING_WARNING_OUTPUT_PREFIX
+		//			"Your application should define its ID using the LOG_DEFINE_APP_IDS macro\n");
 		pid_t pid = getpid();
 		char pidAsHex[5];
 		snprintf(pidAsHex, sizeof(pidAsHex), "%X", pid);
-//		char pidAsDecimal[6];
-//		snprintf(pidAsDecimal, sizeof(pidAsDecimal), "%i", pid);
-//		std::string processName = "PID:";
-//		processName += pidAsDecimal;
-//		processName += " / ";
-//		std::string processName = getProcessName(pid);
+		//		char pidAsDecimal[6];
+		//		snprintf(pidAsDecimal, sizeof(pidAsDecimal), "%i", pid);
+		//		std::string processName = "PID:";
+		//		processName += pidAsDecimal;
+		//		processName += " / ";
+		//		std::string processName = getProcessName(pid);
 		s_pAppLogContext = new AppLogContext( pidAsHex, getProcessName(pid).c_str() );
 	}
 }

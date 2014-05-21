@@ -3,11 +3,11 @@
 #include "ivi-logging.h"
 
 #ifdef ENABLE_DLT_LOGGING
-#include "log-dlt.h"
+#include "ivi-logging-dlt.h"
 #endif
 
-#include "log-console.h"
-#include "log-file.h"
+#include "ivi-logging-console.h"
+#include "ivi-logging-file.h"
 
 /**
  * We define our actual LogContext type, which will be used when calling the log macros
@@ -21,7 +21,7 @@ typedef logging::LogContextT<
 		>, logging::TypeSet<
 		logging::ConsoleLogContext::LogDataType
 #ifdef ENABLE_DLT_LOGGING
-		,logging::DltContextClass::LogDataType
+		, logging::DltContextClass::LogDataType
 #endif
 		> > LogContext;
 

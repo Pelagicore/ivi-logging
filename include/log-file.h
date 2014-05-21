@@ -1,13 +1,1 @@
-#pragma once
-
-#include "log-console.h"
-
-namespace logging {
-
-class FileLogData : public ConsoleLogData {
-};
-
-class FileLogContext : public ConsoleLogContextAbstract {
-};
-
-}
+#include "ivi-logging-file.h"

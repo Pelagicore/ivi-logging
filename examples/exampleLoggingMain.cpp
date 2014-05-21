@@ -1,7 +1,7 @@
 #include "exampleLogging.h"
 #include <unistd.h>
 
-#include "log-types.h"
+#include "ivi-logging-types.h"
 #include <iostream>
 
 // If an application is not multi-instance, we can define its unique identifier
@@ -101,6 +101,8 @@ int main(int argc, const char** argv) {
 	disableConsoleLogging();
 	log_error() << "This log should not visible in the console";
 
-	//	sleep(1000);
+	log_info() << "Sleeping";
+
+	sleep(1000);
 
 }

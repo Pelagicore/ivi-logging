@@ -41,6 +41,11 @@ include_directories(
 
 set(INCLUDE_FILES
 	include/ivi-logging.h
+	include/ivi-logging-types.h
+	include/ivi-logging-console.h
+	include/ivi-logging-file.h
+	include/ivi-logging-common.h
+	include/ivi-logging-null.h
 	include/log-types.h
 	include/log-console.h
 	include/log-file.h
@@ -59,6 +64,7 @@ if (${DLT_FOUND})
 	set(INCLUDE_FILES
 		${INCLUDE_FILES}
 		include/log-dlt.h
+		include/ivi-logging-dlt.h
 	)
 endif()
 
@@ -68,7 +74,7 @@ install(FILES ${INCLUDE_FILES} DESTINATION include/${PACKAGE})
 set(LIB_NAME ${PACKAGE})
 
 add_library( ${LIB_NAME} SHARED
-	src/log.cpp
+	src/ivi-logging.cpp
 	${DLT_LIBRARY_FILES}
 )
 

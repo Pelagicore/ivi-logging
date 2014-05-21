@@ -4,7 +4,7 @@
 #include <functional>
 #include "string.h"
 
-#include "log-common.h"
+#include "ivi-logging-common.h"
 
 namespace logging {
 
@@ -277,4 +277,4 @@ public:
 };
 }
 
-#include "log-types.h"
+#include "ivi-logging-types.h"
