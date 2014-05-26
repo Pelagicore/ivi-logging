@@ -68,7 +68,10 @@ class ConsoleLogContext : public StreamLogContextAbstract {
 public:
 	typedef ConsoleLogData LogDataType;
 
+	static const int DEFAULT_WIDTH = 150;
+
 	ConsoleLogContext() {
+		m_colorSupport = (getConsoleWidth() != 0);
 	}
 
 	bool isEnabled(LogLevel level) override {
@@ -87,8 +90,13 @@ public:
 
 	FILE* getFile(StreamLogData& data) override;
 
+	bool isColorsEnabled() {
+		return m_colorSupport;
+	}
+
 private:
 	static LogLevel s_defaultLogLevel;
+	bool m_colorSupport ;
 };
 
 
@@ -293,10 +301,15 @@ inline StreamLogData& operator<<(StreamLogData& data, double v) {
 class ConsoleLogData : public StreamLogData {
 
 public:
-	typedef StreamLogContextAbstract ContextType;
+	typedef ConsoleLogContext ContextType;
 
 	virtual ~ConsoleLogData() {
 		flushLog();
+	}
+
+	void init(ContextType& aContext, LogDataCommon& data) {
+		m_context = &aContext;
+		StreamLogData::init(aContext, data);
 	}
 
 	enum class Command {
@@ -308,7 +321,10 @@ public:
 	};
 
 	virtual void writePrefix() override {
-		changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
+
+		if (m_context->isColorsEnabled())
+			changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
+
 		StreamLogData::writePrefix();
 	}
 
@@ -316,6 +332,11 @@ public:
 		ByteArray suffixArray = getSuffix();
 
 		int width = m_context->getConsoleWidth();
+
+		// If no width is available, use
+		if (width == 0)
+			width = ContextType::DEFAULT_WIDTH;
+
 		width -= m_content.size() + suffixArray.size() - m_colorCharacterCount;
 
 		// If the output line is longer that the console width, we print our suffix on the next line
@@ -350,6 +371,8 @@ public:
 	}
 
 	int m_colorCharacterCount = 0;
+	ContextType* m_context;
+
 };
 
 }
