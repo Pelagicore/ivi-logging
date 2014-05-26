@@ -30,9 +30,6 @@ inline std::string pointerToString(const void* p) {
 int getThreadID();
 
 
-
-//#define buildFormatString(format) format
-
 #define log_with_context(context, severity, args ...) \
 	for (LogContext* dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
 		context.createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).writeFormatted(args)
@@ -129,11 +126,6 @@ int getThreadID();
 		return __defaultLogContext; \
 	}
 
-/**
- * Deprecated
- */
-#define LOG_INSTANTIATE_CLASS_CONTEXT(className__)
-
 #endif
 
 template<typename ... Types>
@@ -218,11 +210,22 @@ public:
 				    ContextDataTypesClass<LogDataTypes ...> >& context, LogLevel level, const char* fileName,
 			int lineNumber,
 			const char* prettyFunction) :
-			LogDataCommon(level, fileName, lineNumber, prettyFunction) {
+			LogDataCommon(level, fileName, lineNumber, prettyFunction), m_context(context) {
 			for_each_init(m_contexts, context, *this);
 		}
 
 		~LogData() {
+		}
+
+		void write() {
+		}
+
+		template<typename Arg1, typename ... Args>
+		void write(Arg1 firstArg, Args ... remainingArguments) {
+			if ( m_context.isEnabled(m_level) ) {
+				operator<<(firstArg);
+				write(remainingArguments ...);
+			}
 		}
 
 		LogData& writeFormatted() {
@@ -235,17 +238,13 @@ public:
 			return *this;
 		}
 
-		//template<typename Types ... >
-		template<typename Type> void stream(const Type& v) {
-			for_each_in_tuple_(m_contexts, streamFunctor(), v);
-		}
-
 		template<typename Type> LogData& operator<<(const Type& v) {
-			stream(v);
+			for_each_in_tuple_(m_contexts, streamFunctor(), v);
 			return *this;
 		}
 
 		std::tuple<LogDataTypes ...> m_contexts;
+		LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<LogDataTypes ...> >& m_context;
 	};
 
 	LogContextT(const char* id, const char* contextDescription) : LogContextCommon(id, contextDescription) {
@@ -269,10 +268,10 @@ public:
 			for_each_in_tuple_( m_contexts, registerContextFunctor() );
 			m_bRegistered = true;
 		}
-
 	}
 
 	std::tuple<ContextTypes ...> m_contexts;
+	bool m_bRegistered = false;
 
 };
 }

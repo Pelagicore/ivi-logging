@@ -5,6 +5,11 @@
 namespace logging {
 
 class FileLogData : public StreamLogData {
+public:
+	~FileLogData() {
+		flushLog();
+	}
+
 };
 
 class FileLogContext : public StreamLogContextAbstract {

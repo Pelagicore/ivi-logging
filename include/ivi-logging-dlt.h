@@ -1,9 +1,10 @@
 #pragma once
 
-#include "dlt_user.h"
-#include "ivi-logging-common.h"
 #include "assert.h"
-#include <map>
+
+#include "dlt_user.h"
+
+#include "ivi-logging-common.h"
 
 namespace logging {
 
@@ -20,8 +21,6 @@ public:
 	~DltContextClass() {
 		dlt_unregister_context(this);
 	}
-
-	void registerDLTContext();
 
 	void setParentContext(LogContextCommon& context) {
 		m_context = &context;
@@ -85,20 +84,7 @@ private:
 
 };
 
-/**
- * C++ Wrapper for DLT.
- * Usage:
- \code
 
- void sendLogToDLT() {
- DltContextClass myDLTContext("TEST", "This is my context"); // Create a context object and register it
- DltLogData log(myDLTContext, DLT_LOG_INFO);
- log << "This is a string. Here's an int " << 6 << " and a float: " << 5.8F;	// The log object gets destroyed after this line, which actually sends the log to the DLT daemon
- }
-
- \endcode
-
- */
 class DltLogData : public DltContextData {
 
 public:

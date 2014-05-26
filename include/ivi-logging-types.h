@@ -4,7 +4,6 @@
 #pragma once
 
 #include "ivi-logging-common.h"
-#include "ivi-logging.h"
 #include <vector>
 #include <string>
 #include <type_traits>

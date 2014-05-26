@@ -16,9 +16,6 @@ class ByteArray {
 
 public:
 	ByteArray() {
-		m_dynamicData = NULL;
-		m_length = 0;
-
 #ifndef NDEBUG
 		memset( m_staticData, 0, sizeof(m_staticData) );
 #endif
@@ -45,25 +42,25 @@ public:
 	}
 
 	bool usesStaticBuffer() const {
-		return (m_dynamicData == NULL);
+		return (m_dynamicData == nullptr);
 	}
 
-	unsigned char* getData() {
+	char* getData() {
 		if ( usesStaticBuffer() )
 			return m_staticData;
 		else
 			return &( (*m_dynamicData)[0] );
 	}
 
-	unsigned const char* getData() const {
+	const char* getData() const {
 		if ( usesStaticBuffer() )
 			return m_staticData;
 		else
 			return &( (*m_dynamicData)[0] );
 	}
 
-	unsigned char& operator[](size_t index) {
-		//		assert(index < m_length);
+	char& operator[](size_t index) {
+		assert(index < m_length);
 		return getData()[index];
 	}
 
@@ -75,7 +72,7 @@ public:
 			if ( size <= sizeof(m_staticData) ) {
 				m_length = size;
 			} else {
-				m_dynamicData = new std::vector<unsigned char>();
+				m_dynamicData = new std::vector<char>();
 				m_dynamicData->resize(size);
 				memcpy(m_dynamicData->data(), m_staticData, m_length);
 				m_length = -1; // this field is not relevant anymore
@@ -97,7 +94,7 @@ public:
 
 	void append(unsigned char v) {
 		auto i = size();
-		resize(size() + 1);
+		resize(i + 1);
 		getData()[i] = v;
 	}
 
@@ -124,8 +121,8 @@ public:
 	}
 
 private:
-	std::vector<unsigned char>* m_dynamicData = NULL;
-	unsigned char m_staticData[10];
+	std::vector<char>* m_dynamicData = nullptr;
+	char m_staticData[512];
 	size_t m_length = 0;
 };
 

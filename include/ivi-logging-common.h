@@ -51,9 +51,6 @@ public:
 
 	}
 
-	~LogContextCommon() {
-	}
-
 	const char* getDescription() {
 		return m_description;
 	}
@@ -62,9 +59,9 @@ public:
 		return m_id;
 	}
 
+private:
 	const char* m_id;
 	const char* m_description;
-	bool m_bRegistered = false;
 
 };
 
@@ -72,12 +69,21 @@ struct LogDataCommon {
 
 	LogDataCommon(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
 		m_level = level;
-		m_fileName = fileName;
+		m_completeFileName = fileName;
+
+		size_t shortNamePosition = strlen(fileName) - 1;
+
+		while((shortNamePosition>=0) && (fileName[shortNamePosition] != '/') )
+			shortNamePosition--;
+
+		m_fileName = fileName + shortNamePosition + 1;
+
 		m_lineNumber = lineNumber;
 		m_prettyFunction = prettyFunction;
 	}
 
 	LogLevel m_level;
+	const char* m_completeFileName;
 	const char* m_fileName;
 	int m_lineNumber;
 	const char* m_prettyFunction;

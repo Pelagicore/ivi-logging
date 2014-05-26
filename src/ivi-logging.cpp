@@ -3,6 +3,7 @@
 #include "ivi-logging-console.h"
 #include <string>
 #include <dirent.h>
+#include <sys/ioctl.h>
 
 namespace logging {
 
@@ -70,6 +71,14 @@ std::string byteArrayToString(const void* buffer, size_t length) {
 	textBuffer[dest] = 0;
 
 	return textBuffer;
+}
+
+unsigned int StreamLogContextAbstract::getConsoleWidth() {
+	struct::winsize ws;
+	if (::ioctl(0, TIOCGWINSZ, &ws) == 0) {
+		return ws.ws_col;
+	} else
+		return 80;
 }
 
 std::string getProcessName(pid_t pid) {

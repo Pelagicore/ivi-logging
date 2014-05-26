@@ -68,11 +68,18 @@ void myFunction() {
 
 }
 
+int generateDataForLogging() {
+	static int count = 0;
+	printf("generateDataForLogging called %i time(s)\n", ++count);
+	return 100;
+}
+
 int main(int argc, const char** argv) {
 
 	log_debug("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
 	log_error().writeFormatted("Another way to use the printf variant %i", 7345).writeFormatted(". Done");
 
+	log_error().write("GDFGFD", 60);
 	log_error("This one is mixed. Here is a float : ") << 5.7F;
 	log_warn() << 5.7;
 	log_warn() << "Test string";
@@ -89,7 +96,7 @@ int main(int argc, const char** argv) {
 	o2.doSomething();
 
 	std::vector<char> charVector;
-	for (char i = '0'; i <= '9'; i++)
+	for (char i = '0'; i <= '0' + 40; i++)
 		charVector.push_back(i);
 
 	log_warn() << "This is a vector of chars : " << charVector;
@@ -98,8 +105,11 @@ int main(int argc, const char** argv) {
 
 	log_fatal() << "A fatal log";
 
+	log_warn() << generateDataForLogging();
+	log_verbose() << generateDataForLogging();
+
 	disableConsoleLogging();
-	log_error() << "This log should not visible in the console";
+	log_error() << "This log should not visible in the console" << generateDataForLogging();
 
 	log_info() << "Sleeping";
 

@@ -12,10 +12,10 @@ class ConsoleLogData;
 
 class StreamLogContextAbstract {
 public:
-	virtual ~StreamLogContextAbstract() {
+	StreamLogContextAbstract() {
 	}
 
-	StreamLogContextAbstract() {
+	virtual ~StreamLogContextAbstract() {
 	}
 
 	void setParentContext(LogContextCommon& context) {
@@ -23,7 +23,7 @@ public:
 	}
 
 	const char* getShortID() {
-		return m_context->m_id;
+		return m_context->getID();
 	}
 
 	void registerContext() {
@@ -52,19 +52,12 @@ public:
 		}
 	}
 
-	bool colorsEnabled() {
-		return m_colorsEnabled;
-	}
-
-	void setColorsEnabled(bool enabled) {
-		m_colorsEnabled = enabled;
-	}
+	static unsigned int getConsoleWidth();
 
 private:
 	static std::mutex m_outputMutex;
 	LogContextCommon* m_context = nullptr;
 	LogLevel m_level = LogLevel::Debug;
-	bool m_colorsEnabled = false;
 };
 
 /**
@@ -76,7 +69,6 @@ public:
 	typedef ConsoleLogData LogDataType;
 
 	ConsoleLogContext() {
-		setColorsEnabled(true);
 	}
 
 	bool isEnabled(LogLevel level) override {
@@ -102,18 +94,11 @@ private:
 
 class StreamLogData {
 
-	enum class Command {
-		RESET = 0, BRIGHT = 1, DIM = 2, UNDERLINE = 3, BLINK = 4, REVERSE = 7, HIDDEN = 8
-	};
-
-	enum class Color {
-		BLACK = 0, RED = 1, GREEN = 2, YELLOW = 3, BLUE = 4, MAGENTA = 5, CYAN = 6, WHITE = 7
-	};
-
 public:
 	static constexpr const char* DEFAULT_PREFIX = "%4.4s [%s] ";
 
 	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = "  %s / %s - %d\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = " | %s%.0s - %d\n";
 	static constexpr const char* DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION = "\n";
 
 	typedef StreamLogContextAbstract ContextType;
@@ -122,7 +107,9 @@ public:
 	}
 
 	virtual ~StreamLogData() {
-		// flush
+	}
+
+	void flushLog() {
 		if ( isEnabled() ) {
 			writeSuffix();
 
@@ -151,23 +138,21 @@ public:
 	}
 
 	virtual void writePrefix() {
-		changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
 		writeFormatted( m_prefixFormat, getContext()->getShortID(), getLogLevelString(m_data->m_level) );
 	}
 
 	virtual void writeSuffix() {
-		writeFormatted(m_suffixFormat, m_data->m_fileName, m_data->m_prettyFunction, m_data->m_lineNumber);
-		changeCurrentColor(Command::RESET, getColor(LogLevel::None), Color::BLACK);
+		writeFormatted( (const char*)getSuffix().getData() );
+	}
+
+	virtual ByteArray getSuffix() {
+		ByteArray array;
+		writeFormatted(array, m_suffixFormat, m_data->m_fileName, m_data->m_prettyFunction, m_data->m_lineNumber);
+		return array;
 	}
 
 	ContextType* getContext() {
 		return m_context;
-	}
-
-	void changeCurrentColor(Command attr, Color fg, Color bg) {
-		/* Command is the control command to the terminal */
-		if ( m_context->colorsEnabled() )
-			writeFormatted("%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30, static_cast<int>(bg) + 40);
 	}
 
 	static const char* getLogLevelString(LogLevel logLevel) {
@@ -184,30 +169,8 @@ public:
 		return v;
 	}
 
-	static Color getColor(LogLevel logLevel) {
-		Color c = Color::WHITE;
-		switch (logLevel) {
-		case LogLevel::Warning : c = Color::RED; break;
-		case LogLevel::Error : c = Color::RED; break;
-		case LogLevel::Verbose : c = Color::GREEN; break;
-		default :         c = Color::WHITE;
-		}
-		return c;
-	}
-
 	bool isEnabled() {
 		return ( m_context->isEnabled(m_data->m_level) );
-	}
-
-	void write() {
-	}
-
-	template<typename Arg1, typename ... Args>
-	void write(Arg1 firstArg, Args ... remainingArguments) {
-		if ( isEnabled() ) {
-			operator<<(firstArg);
-			write(remainingArguments ...);
-		}
 	}
 
 	LogDataCommon& getData() {
@@ -216,31 +179,36 @@ public:
 
 	template<typename ... Args>
 	void writeFormatted(const char* format, Args ... args) {
-
-	#pragma GCC diagnostic push
-		// Make sure GCC does not complain about not being able to check the format string since it is no literal string
-	#pragma GCC diagnostic ignored "-Wformat-security"
 		if ( isEnabled() ) {
-			int size = snprintf(NULL, 0, format, args ...) + 1; // +1 since the snprintf returns the number of characters excluding the null termination
-			size_t startOfStringIndex = m_content.size();
-			m_content.resize(m_content.size() + size);
-			char* p = (char*) (m_content.getData() + startOfStringIndex);
-			snprintf(p, size, format, args ...);
-
-			// remove terminal null character
-			m_content.resize(m_content.size() - 1);
+			writeFormatted(m_content, format, args ...);
 		}
-	#pragma GCC diagnostic pop
-
 	}
 
-private:
+	template<typename ... Args>
+	void writeFormatted(ByteArray& byteArray, const char* format, Args ... args) const {
+
+#pragma GCC diagnostic push
+		// Make sure GCC does not complain about not being able to check the format string since it is no literal string
+#pragma GCC diagnostic ignored "-Wformat-security"
+		int size = snprintf(NULL, 0, format, args ...) + 1; // +1 since the snprintf returns the number of characters excluding the null termination
+		size_t startOfStringIndex = byteArray.size();
+		byteArray.resize(byteArray.size() + size);
+		char* p = byteArray.getData() + startOfStringIndex;
+		snprintf(p, size, format, args ...);
+
+		// remove terminal null character
+		byteArray.resize(byteArray.size() - 1);
+#pragma GCC diagnostic pop
+	}
+
+protected:
 	ContextType* m_context = nullptr;
 	ByteArray m_content;
 	LogDataCommon* m_data = nullptr;
 
 	const char* m_prefixFormat = DEFAULT_PREFIX;
-	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
+//	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
+	const char* m_suffixFormat = DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION;
 };
 
 inline FILE* ConsoleLogContext::getFile(StreamLogData& data) {
@@ -323,6 +291,65 @@ inline StreamLogData& operator<<(StreamLogData& data, double v) {
 }
 
 class ConsoleLogData : public StreamLogData {
+
+public:
+	typedef StreamLogContextAbstract ContextType;
+
+	virtual ~ConsoleLogData() {
+		flushLog();
+	}
+
+	enum class Command {
+		RESET = 0, BRIGHT = 1, DIM = 2, UNDERLINE = 3, BLINK = 4, REVERSE = 7, HIDDEN = 8
+	};
+
+	enum class Color {
+		BLACK = 0, RED = 1, GREEN = 2, YELLOW = 3, BLUE = 4, MAGENTA = 5, CYAN = 6, WHITE = 7
+	};
+
+	virtual void writePrefix() override {
+		changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
+		StreamLogData::writePrefix();
+	}
+
+	virtual void writeSuffix() override {
+		ByteArray suffixArray = getSuffix();
+
+		int width = m_context->getConsoleWidth();
+		width -= m_content.size() + suffixArray.size() - m_colorCharacterCount;
+
+		// If the output line is longer that the console width, we print our suffix on the next line
+		if (width < 0) {
+			writeFormatted("\n");
+			width = m_context->getConsoleWidth() - suffixArray.size();
+		}
+
+		for(int i = 0; i < width; i++) {
+			writeFormatted(" ");
+		}
+
+		writeFormatted( "%s", suffixArray.getData() );
+	}
+
+	void changeCurrentColor(Command attr, Color fg, Color bg) {
+		char colorString[32];
+		snprintf(colorString, sizeof(colorString), "%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30, static_cast<int>(bg) + 40);
+		writeFormatted("%s", colorString);
+		m_colorCharacterCount += strlen(colorString);
+	}
+
+	static Color getColor(LogLevel logLevel) {
+		Color c = Color::WHITE;
+		switch (logLevel) {
+		case LogLevel::Warning : c = Color::RED; break;
+		case LogLevel::Error : c = Color::RED; break;
+		case LogLevel::Verbose : c = Color::GREEN; break;
+		default :         c = Color::WHITE;
+		}
+		return c;
+	}
+
+	int m_colorCharacterCount = 0;
 };
 
 }
