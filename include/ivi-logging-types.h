@@ -6,6 +6,7 @@
 #include "ivi-logging-common.h"
 #include <vector>
 #include <string>
+#include <exception>
 #include <type_traits>
 
 namespace logging {
@@ -33,6 +34,13 @@ template<typename LogDataType, typename =
 		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::string& s) {
 	log << s.c_str();
+	return log;
+}
+
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const std::exception& ex) {
+	log << ex.what();
 	return log;
 }
 
