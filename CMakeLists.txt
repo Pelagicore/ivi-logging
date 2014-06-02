@@ -54,12 +54,6 @@ set(INCLUDE_FILES
 	include/ByteArray.h
 )
 
-set(INCLUDE_FILES
-	${INCLUDE_FILES}
-	qt/log-qt.h
-)
-
-
 if (${DLT_FOUND})
 	set(INCLUDE_FILES
 		${INCLUDE_FILES}

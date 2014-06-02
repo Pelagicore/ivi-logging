@@ -71,12 +71,10 @@ struct LogDataCommon {
 		m_level = level;
 		m_completeFileName = fileName;
 
-		size_t shortNamePosition = strlen(fileName) - 1;
-
-		while((shortNamePosition>=0) && (fileName[shortNamePosition] != '/') )
+		size_t shortNamePosition = strlen(m_completeFileName);
+		while ((shortNamePosition > 0) && (m_completeFileName[shortNamePosition - 1] != '/'))
 			shortNamePosition--;
-
-		m_fileName = fileName + shortNamePosition + 1;
+		m_fileName = m_completeFileName + shortNamePosition;
 
 		m_lineNumber = lineNumber;
 		m_prettyFunction = prettyFunction;
