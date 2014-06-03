@@ -146,7 +146,7 @@ public:
 	}
 
 	virtual void writePrefix() {
-		writeFormatted( m_prefixFormat, getContext()->getShortID(), getLogLevelString(m_data->m_level) );
+		writeFormatted( m_prefixFormat, getContext()->getShortID(), getLogLevelString(m_data->getLogLevel()) );
 	}
 
 	virtual void writeSuffix() {
@@ -155,7 +155,7 @@ public:
 
 	virtual ByteArray getSuffix() {
 		ByteArray array;
-		writeFormatted(array, m_suffixFormat, m_data->m_fileName, m_data->m_prettyFunction, m_data->m_lineNumber);
+		writeFormatted(array, m_suffixFormat, m_data->getFileName(), m_data->getPrettyFunction(), m_data->getLineNumber());
 		return array;
 	}
 
@@ -178,7 +178,7 @@ public:
 	}
 
 	bool isEnabled() {
-		return ( m_context->isEnabled(m_data->m_level) );
+		return ( m_context->isEnabled(m_data->getLogLevel()) );
 	}
 
 	LogDataCommon& getData() {
@@ -220,7 +220,7 @@ protected:
 };
 
 inline FILE* ConsoleLogContext::getFile(StreamLogData& data) {
-	if (data.getData().m_level == LogLevel::Error)
+	if (data.getData().getLogLevel() == LogLevel::Error)
 		return stderr;
 	else
 		return stdout;
@@ -323,7 +323,7 @@ public:
 	virtual void writePrefix() override {
 
 		if (m_context->isColorsEnabled())
-			changeCurrentColor(Command::RESET, getColor(m_data->m_level), Color::BLACK);
+			changeCurrentColor(Command::RESET, getColor(m_data->getLogLevel()), Color::BLACK);
 
 		StreamLogData::writePrefix();
 	}

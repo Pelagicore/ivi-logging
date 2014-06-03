@@ -100,7 +100,7 @@ public:
 	void init(DltContextClass& context, LogDataCommon& data) {
 		m_data = &data;
 		m_context = &context;
-		auto dltLogLevel = m_context->getDLTLogLevel(m_data->m_level);
+		auto dltLogLevel = m_context->getDLTLogLevel(m_data->getLogLevel());
 
 #ifdef DLT_2_10
 		m_enabled = ( (m_context)->log_level_ptr && ( (dltLogLevel) <= (int)*( (m_context)->log_level_ptr ) ) &&
@@ -118,10 +118,10 @@ public:
 	virtual ~DltLogData() {
 		if (m_enabled) {
 			if (m_enableSourceCodeLocationInfo) {
-				if (m_data->m_fileName != NULL) dlt_user_log_write_utf8_string(this, m_data->m_fileName);
-				if (m_data->m_lineNumber != -1) dlt_user_log_write_uint32(this, m_data->m_lineNumber);
-				if (m_data->m_prettyFunction != NULL) dlt_user_log_write_utf8_string(this,
-												     m_data->m_prettyFunction);
+				if (m_data->getFileName() != nullptr) dlt_user_log_write_utf8_string(this, m_data->getFileName());
+				if (m_data->getLineNumber() != -1) dlt_user_log_write_uint32(this, m_data->getLineNumber());
+				if (m_data->getPrettyFunction() != nullptr) dlt_user_log_write_utf8_string(this,
+												     m_data->getPrettyFunction());
 			}
 
 			//			auto r =

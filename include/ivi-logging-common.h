@@ -65,27 +65,44 @@ private:
 
 };
 
-struct LogDataCommon {
+class LogDataCommon {
 
+public:
 	LogDataCommon(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
 		m_level = level;
-		m_completeFileName = fileName;
-
-		size_t shortNamePosition = strlen(m_completeFileName);
-		while ((shortNamePosition > 0) && (m_completeFileName[shortNamePosition - 1] != '/'))
-			shortNamePosition--;
-		m_fileName = m_completeFileName + shortNamePosition;
-
+		m_longFileName = fileName;
 		m_lineNumber = lineNumber;
 		m_prettyFunction = prettyFunction;
 	}
 
-	LogLevel m_level;
-	const char* m_completeFileName;
-	const char* m_fileName;
-	int m_lineNumber;
-	const char* m_prettyFunction;
+	LogLevel getLogLevel() const {
+		return m_level;
+	}
 
+	const char* getFileName() const {
+		if (m_fileName == nullptr) {
+			size_t shortNamePosition = strlen(m_longFileName);
+			while ((shortNamePosition > 0) && (m_longFileName[shortNamePosition - 1] != '/'))
+				shortNamePosition--;
+			m_fileName = m_longFileName + shortNamePosition;
+		}
+		return m_fileName;
+	}
+
+	int getLineNumber() {
+		return m_lineNumber;
+	}
+
+	const char* getPrettyFunction() const {
+		return m_prettyFunction;
+	}
+
+private:
+	const char* m_longFileName;
+	mutable const char* m_fileName = nullptr;
+	const char* m_prettyFunction;
+	int m_lineNumber;
+	LogLevel m_level;
 };
 
 
