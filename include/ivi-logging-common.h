@@ -102,6 +102,7 @@ private:
 	mutable const char* m_fileName = nullptr;
 	const char* m_prettyFunction;
 	int m_lineNumber;
+protected:
 	LogLevel m_level;
 };
 
