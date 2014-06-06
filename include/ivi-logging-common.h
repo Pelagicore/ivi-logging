@@ -81,10 +81,16 @@ public:
 
 	const char* getFileName() const {
 		if (m_fileName == nullptr) {
-			size_t shortNamePosition = strlen(m_longFileName);
-			while ((shortNamePosition > 0) && (m_longFileName[shortNamePosition - 1] != '/'))
-				shortNamePosition--;
-			m_fileName = m_longFileName + shortNamePosition;
+            if (m_longFileName == m_cachedLongFileName){
+                m_fileName = m_cachedFileName;
+            }else{
+                size_t shortNamePosition = strlen(m_longFileName);
+                while ((shortNamePosition > 0) && (m_longFileName[shortNamePosition - 1] != '/'))
+                    shortNamePosition--;
+                m_fileName = m_longFileName + shortNamePosition;
+                m_cachedFileName = m_fileName;
+                m_cachedLongFileName = m_longFileName;
+            }
 		}
 		return m_fileName;
 	}
@@ -100,8 +106,12 @@ public:
 private:
 	const char* m_longFileName;
 	mutable const char* m_fileName = nullptr;
+    /*thread_local doesn't work under osx (but __thread does which is pretty strange */
+    static __thread const char* m_cachedLongFileName;
+    static __thread const char* m_cachedFileName;
 	const char* m_prettyFunction;
 	int m_lineNumber;
+protected:
 	LogLevel m_level;
 };
 

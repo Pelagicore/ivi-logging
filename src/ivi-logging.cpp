@@ -1,6 +1,7 @@
 #include "stdint.h"
 #include "stdio.h"
 #include "ivi-logging-console.h"
+#include "ivi-logging-common.h"
 #include <string>
 #include <dirent.h>
 #include <sys/ioctl.h>
@@ -31,6 +32,9 @@ ThreadInformation __threadID;
 int getThreadID() {
 	return __threadID.id;
 }
+
+__thread const char *LogDataCommon::m_cachedFileName = nullptr;
+__thread const char *LogDataCommon::m_cachedLongFileName = nullptr;
 
 void setDefaultAPPIDSIfNeeded() {
 	if (s_pAppLogContext == nullptr) {
