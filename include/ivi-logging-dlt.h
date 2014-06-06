@@ -156,7 +156,7 @@ public:
 private:
 	DltContextClass* m_context = nullptr;
 	LogDataCommon* m_data = nullptr;
-	bool m_enableSourceCodeLocationInfo = false;
+	bool m_enableSourceCodeLocationInfo = true; // todo mb: only for testing. false;
 	bool m_enabled = false;
 
 };
