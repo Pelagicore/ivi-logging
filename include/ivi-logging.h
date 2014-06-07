@@ -27,7 +27,7 @@ inline std::string pointerToString(const void* p) {
 	return buffer;
 }
 
-int getThreadID();
+uint32_t getThreadID();
 
 
 #define log_with_context(context, severity, args ...) \
