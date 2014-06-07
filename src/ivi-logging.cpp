@@ -5,6 +5,7 @@
 #include <string>
 #include <dirent.h>
 #include <sys/ioctl.h>
+#include <atomic>
 
 namespace logging {
 
@@ -14,23 +15,15 @@ LogLevel ConsoleLogContext::s_defaultLogLevel = LogLevel::All;
 
 std::mutex StreamLogContextAbstract::m_outputMutex;
 
-struct ThreadInformation {
+std::atomic<uint32_t> sNextThreadId = ATOMIC_VAR_INIT(0);
 
-	ThreadInformation() {
-		id = sNextID++;
-	}
+__thread uint32_t __threadId=0;
 
-	int id = 0;
-
-	static int sNextID;
-};
-int ThreadInformation::sNextID = 0;
-
-//thread_local
-ThreadInformation __threadID;
-
-int getThreadID() {
-	return __threadID.id;
+uint32_t getThreadID() {
+    if (!__threadId){
+        __threadId = ++sNextThreadId;
+    }
+	return __threadId;
 }
 
 __thread const char *LogDataCommon::m_cachedFileName = nullptr;
