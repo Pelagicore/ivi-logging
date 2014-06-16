@@ -27,11 +27,9 @@ inline std::string pointerToString(const void* p) {
 	return buffer;
 }
 
-int getThreadID();
-
 
 #define log_with_context(context, severity, args ...) \
-	for (LogContext* dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
+	for (auto dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
 		context.createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).writeFormatted(args)
 
 #ifndef log_error
@@ -88,7 +86,7 @@ int getThreadID();
 	LOG_SET_DEFAULT_CONTEXT(context);
 
 /**
- * Import the given context, which should exported by another module
+ * Import the given context, which should be exported by another module
  */
 #define LOG_IMPORT_CONTEXT(contextName) extern LogContext contextName;
 

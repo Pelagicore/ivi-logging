@@ -96,7 +96,7 @@ public:
 
 private:
 	static LogLevel s_defaultLogLevel;
-	bool m_colorSupport ;
+	bool m_colorSupport;
 };
 
 
@@ -105,8 +105,9 @@ class StreamLogData {
 public:
 	static constexpr const char* DEFAULT_PREFIX = "%4.4s [%s] ";
 
-	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = "  %s / %s - %d\n";
-	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = " | %s%.0s - %d\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = "| %.2i | %s / %s - %d\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = "| %s%.0s - %d | %.2i%.0s\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME = "| %s%.0s - %d | %.2i-%.16s\n";
 	static constexpr const char* DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION = "\n";
 
 	typedef StreamLogContextAbstract ContextType;
@@ -146,7 +147,7 @@ public:
 	}
 
 	virtual void writePrefix() {
-		writeFormatted( m_prefixFormat, getContext()->getShortID(), getLogLevelString(m_data->getLogLevel()) );
+		writeFormatted( m_prefixFormat, getContext()->getShortID(), getLogLevelString( m_data->getLogLevel() ) );
 	}
 
 	virtual void writeSuffix() {
@@ -155,7 +156,8 @@ public:
 
 	virtual ByteArray getSuffix() {
 		ByteArray array;
-		writeFormatted(array, m_suffixFormat, m_data->getFileName(), m_data->getPrettyFunction(), m_data->getLineNumber());
+		writeFormatted( array, m_suffixFormat, m_data->getFileName(), m_data->getPrettyFunction(),
+				m_data->getLineNumber(), getThreadInformation().getID(), getThreadInformation().getName() );
 		return array;
 	}
 
@@ -178,7 +180,7 @@ public:
 	}
 
 	bool isEnabled() {
-		return ( m_context->isEnabled(m_data->getLogLevel()) );
+		return ( m_context->isEnabled( m_data->getLogLevel() ) );
 	}
 
 	LogDataCommon& getData() {
@@ -215,8 +217,10 @@ protected:
 	LogDataCommon* m_data = nullptr;
 
 	const char* m_prefixFormat = DEFAULT_PREFIX;
-//	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
+	//	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
+//	const char* m_suffixFormat = DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME;
 	const char* m_suffixFormat = DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION;
+
 };
 
 inline FILE* ConsoleLogContext::getFile(StreamLogData& data) {
@@ -322,8 +326,8 @@ public:
 
 	virtual void writePrefix() override {
 
-		if (m_context->isColorsEnabled())
-			changeCurrentColor(Command::RESET, getColor(m_data->getLogLevel()), Color::BLACK);
+		if ( m_context->isColorsEnabled() )
+			changeCurrentColor(Command::RESET, getColor( m_data->getLogLevel() ), Color::BLACK);
 
 		StreamLogData::writePrefix();
 	}
@@ -354,7 +358,8 @@ public:
 
 	void changeCurrentColor(Command attr, Color fg, Color bg) {
 		char colorString[32];
-		snprintf(colorString, sizeof(colorString), "%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30, static_cast<int>(bg) + 40);
+		snprintf(colorString, sizeof(colorString), "%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30,
+			 static_cast<int>(bg) + 40);
 		writeFormatted("%s", colorString);
 		m_colorCharacterCount += strlen(colorString);
 	}

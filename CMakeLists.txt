@@ -77,6 +77,7 @@ set_target_properties(${LIB_NAME} PROPERTIES VERSION ${VERSION} SOVERSION ${${PR
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
    ${DLT_LIBRARIES}
    ${CPP_LIBS}
+   pthread
 )
 
 INSTALL(TARGETS ${LIB_NAME}
@@ -88,7 +89,7 @@ install(FILES IVILoggingConfig.cmake DESTINATION lib/cmake/IVILogging)
 configure_file(ivi-logging.pc.in ivi-logging.pc)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-logging.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
 
-#add_subdirectory (test)
+add_subdirectory (test)
 
 add_subdirectory (examples)
 add_subdirectory (doc)

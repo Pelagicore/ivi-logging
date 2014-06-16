@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <string>
 #include <string.h>
+#include <atomic>
+#include <array>
 
 namespace logging {
 
@@ -17,6 +19,32 @@ struct AppLogContext;
 extern AppLogContext* s_pAppLogContext;
 
 std::string getProcessName(pid_t pid);
+
+class ThreadInformation {
+
+public:
+	ThreadInformation() {
+		m_id = sNextID++;
+	}
+
+	static bool isMultithreadedApp() {
+		return (sNextID != 1);
+	}
+
+	int getID() const {
+		return m_id;
+	}
+
+	const char* getName() const;
+
+private:
+	mutable std::string m_name;
+	int m_id;
+	static std::atomic_int sNextID;
+
+};
+
+ThreadInformation& getThreadInformation();
 
 struct AppLogContext {
 	AppLogContext(const char* id, const char* description) : m_id(id), m_description(description) {
@@ -33,7 +61,6 @@ struct AppLogContext {
 };
 
 void setDefaultAPPIDSIfNeeded();
-
 
 /**
  * A logging context
@@ -82,7 +109,7 @@ public:
 	const char* getFileName() const {
 		if (m_fileName == nullptr) {
 			size_t shortNamePosition = strlen(m_longFileName);
-			while ((shortNamePosition > 0) && (m_longFileName[shortNamePosition - 1] != '/'))
+			while ( (shortNamePosition > 0) && (m_longFileName[shortNamePosition - 1] != '/') )
 				shortNamePosition--;
 			m_fileName = m_longFileName + shortNamePosition;
 		}

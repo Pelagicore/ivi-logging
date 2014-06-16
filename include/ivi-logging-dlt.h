@@ -93,14 +93,24 @@ public:
 	DltLogData() {
 	}
 
+	/**
+	 * Enable or disable the output of source file information (file name, function name, line number)
+	 */
 	void setEnableSourceCodeLocationInfo(bool enabled) {
 		m_enableSourceCodeLocationInfo = enabled;
+	}
+
+	/**
+	 * Enable or disable the output of additional information about the thread generating the log
+	 */
+	void setEnableThreadInfo(bool enabled) {
+		m_enableThreadInfo = enabled;
 	}
 
 	void init(DltContextClass& context, LogDataCommon& data) {
 		m_data = &data;
 		m_context = &context;
-		auto dltLogLevel = m_context->getDLTLogLevel(m_data->getLogLevel());
+		auto dltLogLevel = m_context->getDLTLogLevel( m_data->getLogLevel() );
 
 #ifdef DLT_2_10
 		m_enabled = ( (m_context)->log_level_ptr && ( (dltLogLevel) <= (int)*( (m_context)->log_level_ptr ) ) &&
@@ -118,10 +128,18 @@ public:
 	virtual ~DltLogData() {
 		if (m_enabled) {
 			if (m_enableSourceCodeLocationInfo) {
-				if (m_data->getFileName() != nullptr) dlt_user_log_write_utf8_string(this, m_data->getFileName());
-				if (m_data->getLineNumber() != -1) dlt_user_log_write_uint32(this, m_data->getLineNumber());
-				if (m_data->getPrettyFunction() != nullptr) dlt_user_log_write_utf8_string(this,
-												     m_data->getPrettyFunction());
+				if (m_data->getFileName() != nullptr) dlt_user_log_write_utf8_string( this, m_data->getFileName() );
+				if (m_data->getLineNumber() != -1) dlt_user_log_write_uint32( this, m_data->getLineNumber() );
+				if (m_data->getPrettyFunction() != nullptr) dlt_user_log_write_utf8_string(
+						this,
+						m_data->
+						getPrettyFunction() );
+			}
+
+			if (m_enableThreadInfo) {
+				dlt_user_log_write_string(this, "| ThreadID");
+				dlt_user_log_write_uint8( this, getThreadInformation().getID() );
+				dlt_user_log_write_string( this, getThreadInformation().getName() );
 			}
 
 			//			auto r =
@@ -157,6 +175,7 @@ private:
 	DltContextClass* m_context = nullptr;
 	LogDataCommon* m_data = nullptr;
 	bool m_enableSourceCodeLocationInfo = false;
+	bool m_enableThreadInfo = false;
 	bool m_enabled = false;
 
 };
@@ -189,7 +208,7 @@ inline DltLogData& operator<<(DltLogData& data, float f) {
 }
 
 
-// TODO : strangely, it seems like none of the types defined in "stding.h" is equivalent to "long int" on a 32 bits platform
+// TODO : strangely, it seems like none of the types defined in "stdint.h" is equivalent to "long int" on a 32 bits platform
 #if __WORDSIZE == 32
 inline DltLogData& operator<<(DltLogData& data, long int v) {
 	dlt_user_log_write_int32(&data, v);

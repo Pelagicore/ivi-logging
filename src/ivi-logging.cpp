@@ -4,6 +4,7 @@
 #include <string>
 #include <dirent.h>
 #include <sys/ioctl.h>
+#include <pthread.h>
 
 namespace logging {
 
@@ -13,23 +14,12 @@ LogLevel ConsoleLogContext::s_defaultLogLevel = LogLevel::All;
 
 std::mutex StreamLogContextAbstract::m_outputMutex;
 
-struct ThreadInformation {
+std::atomic_int ThreadInformation::sNextID = ATOMIC_VAR_INIT(0);
 
-	ThreadInformation() {
-		id = sNextID++;
-	}
+thread_local ThreadInformation __threadID;
 
-	int id = 0;
-
-	static int sNextID;
-};
-int ThreadInformation::sNextID = 0;
-
-//thread_local
-ThreadInformation __threadID;
-
-int getThreadID() {
-	return __threadID.id;
+ThreadInformation& getThreadInformation() {
+	return __threadID;
 }
 
 void setDefaultAPPIDSIfNeeded() {
@@ -47,7 +37,9 @@ void setDefaultAPPIDSIfNeeded() {
 		//		processName += pidAsDecimal;
 		//		processName += " / ";
 		//		std::string processName = getProcessName(pid);
-		s_pAppLogContext = new AppLogContext( pidAsHex, getProcessName(pid).c_str() );
+		static AppLogContext defaultAppLogContext( pidAsHex,
+							   getProcessName(pid).c_str() );
+		s_pAppLogContext = &defaultAppLogContext;
 	}
 }
 
@@ -60,7 +52,8 @@ std::string byteArrayToString(const void* buffer, size_t length) {
 	if (length + 1 > sizeof(textBuffer) / 3)
 		length = sizeof(textBuffer) / 3;
 
-	const unsigned char* bufferAsChar = static_cast<const unsigned char*>(buffer);
+	const unsigned char* bufferAsChar =
+		static_cast<const unsigned char*>(buffer);
 
 	for (size_t byteIndex = 0; byteIndex < length; byteIndex++) {
 		textBuffer[dest++] = hexcode[bufferAsChar[byteIndex] >> 4];
@@ -78,39 +71,46 @@ unsigned int StreamLogContextAbstract::getConsoleWidth() {
 	if (::ioctl(0, TIOCGWINSZ, &ws) == 0) {
 		return ws.ws_col;
 	} else
-		return 80;
+		return 0;
 }
 
 std::string getProcessName(pid_t pid) {
 
-	DIR* dir;
-	FILE* file;
+	char processName[1024] = "";
 
-	if (pid < 0)
-		return NULL;
+	DIR* dir = opendir("/proc");
+	if (dir != nullptr) {
+		char path[128];
+		snprintf(path, sizeof(path), "/proc/%i/cmdline", pid);
+		FILE* file = fopen(path, "r");
 
-	dir = opendir("/proc");
-	if (!dir) {
-		char b[1024];
-		snprintf(b, sizeof(b), "Unknown process with PID %i", pid);
-		return b;
+		if (file != nullptr) {
+			size_t n = fread(processName, 1, sizeof(processName) - 1, file);
+			if (n > 0)
+				processName[n - 1] = 0;
+			fclose(file);
+		}
 	}
 
-	char path[64];
-	snprintf(path, sizeof(path), "/proc/%i/cmdline", pid);
-	file = fopen(path, "r");
-
-	if (file == NULL) {
+	if (dir != nullptr)
 		closedir(dir);
-		return "Unknown process";
-	}
 
-	char processName[256];
-	fread(processName, 1, sizeof(processName) - 1, file);
-	fclose(file);
-	closedir(dir);
+	if (strlen(processName) == 0)
+		snprintf(processName, sizeof(processName), "Unknown process with PID %i", pid);
 
 	return processName;
+
 }
+
+
+const char* ThreadInformation::getName() const {
+	std::array<char, 64> buffer;
+	auto ret = pthread_getname_np( pthread_self(), buffer.data(), buffer.size() );
+	if (ret != 0)
+		buffer[0] = 0;
+	m_name = buffer.data();
+	return m_name.c_str();
+}
+
 
 }
