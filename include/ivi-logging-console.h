@@ -346,7 +346,7 @@ public:
 		// If the output line is longer that the console width, we print our suffix on the next line
 		if (width < 0) {
 			writeFormatted("\n");
-			width = m_context->getConsoleWidth() - suffixArray.size();
+			width = m_context->getConsoleWidth() - static_cast<int>(suffixArray.size());
 		}
 
 		for(int i = 0; i < width; i++) {
