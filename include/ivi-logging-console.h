@@ -337,7 +337,7 @@ public:
 
 		int width = m_context->getConsoleWidth();
 
-		// If no width is available, use
+		// If no width is available, use default width
 		if (width == 0)
 			width = ContextType::DEFAULT_WIDTH;
 
