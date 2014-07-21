@@ -52,6 +52,7 @@ set(INCLUDE_FILES
 	include/log-common.h
 	include/log-null.h
 	include/ByteArray.h
+	include/ivi-no-logging.h
 )
 
 if (${DLT_FOUND})
@@ -67,27 +68,20 @@ install(FILES ${INCLUDE_FILES} DESTINATION include/${PACKAGE})
 
 set(LIB_NAME ${PACKAGE})
 
-add_library( ${LIB_NAME} SHARED
-	src/ivi-logging.cpp
-	${DLT_LIBRARY_FILES}
-)
-
-set_target_properties(${LIB_NAME} PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
-
-TARGET_LINK_LIBRARIES( ${LIB_NAME}
-   ${DLT_LIBRARIES}
-   ${CPP_LIBS}
-   pthread
-)
-
-INSTALL(TARGETS ${LIB_NAME}
-  DESTINATION lib
-)
-
 install(FILES IVILoggingConfig.cmake DESTINATION lib/cmake/IVILogging)
 
 configure_file(ivi-logging.pc.in ivi-logging.pc)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-logging.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+
+set(DEVELOPMENT_INCLUDE_PATH " -I${CMAKE_CURRENT_SOURCE_DIR}/include #")
+set(DEVELOPMENT_LIBRARY_PATH " -L${CMAKE_CURRENT_BINARY_DIR}/src #" )
+configure_file(ivi-logging.pc.in ivi-logging-uninstalled.pc)
+if(INSTALL_PKGCONFIG_UNINSTALLED_FILE)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ivi-logging-uninstalled.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
+endif()
+
+
+add_subdirectory (src)
 
 add_subdirectory (test)
 

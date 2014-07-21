@@ -1,0 +1,16 @@
+add_library( ${LIB_NAME} SHARED
+	ivi-logging.cpp
+	${DLT_LIBRARY_FILES}
+)
+
+set_target_properties(${LIB_NAME} PROPERTIES VERSION ${VERSION} SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
+
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+   ${DLT_LIBRARIES}
+   ${CPP_LIBS}
+   pthread
+)
+
+INSTALL(TARGETS ${LIB_NAME}
+  DESTINATION lib
+)
