@@ -77,6 +77,11 @@ public:
 			dltCode = dlt_register_app(pidAsHexString, descriptionWithPID);
 		}
 		isAppRegistered() = true;
+
+		// TODO : caution is needed when forking a process if the connection to the DLT daemon is active.
+		// We can probably use pthread_atfork() to disconnect before the fork, and reconnect after
+//		int pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(void));
+
 	}
 
 private:

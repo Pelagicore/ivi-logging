@@ -44,4 +44,47 @@ LogDataType& operator<<(LogDataType& log, const std::exception& ex) {
 	return log;
 }
 
+//template<typename LogDataType, typename =
+//		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+//LogDataType& operator<<(LogDataType& log, const char a[]) {
+//	log << (const char*)&a[0];
+//	return log;
+//}
+
 }
+
+namespace std {
+
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+LogDataType&
+  endl(LogDataType& log) {
+	log << "\n";
+	return log;
+  }
+
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+LogDataType&
+  ends(LogDataType& log) {
+	// TODO : implement
+	return log;
+  }
+
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+LogDataType&
+  flush(LogDataType& log) {
+	// TODO : implement
+	return log;
+  }
+
+template<typename LogDataType, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, LogDataType& (*functionPtr)(LogDataType&) ) {
+	functionPtr(log);
+	return log;
+}
+
+}
+

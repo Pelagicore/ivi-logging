@@ -74,6 +74,7 @@ int generateDataForLogging() {
 	return 100;
 }
 
+
 int main(int argc, const char** argv) {
 
 	log_debug("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
@@ -107,11 +108,15 @@ int main(int argc, const char** argv) {
 	log_warn() << generateDataForLogging();
 	log_verbose() << generateDataForLogging();
 
+	log_info() << "A log with std::endl" << std::endl;
+	log_info() << "A log with std::ends" << std::ends;
+	log_info() << "A log with std::flush" << std::flush;
+
 	disableConsoleLogging();
 	log_error() << "This log should not visible in the console";
 
 	log_info() << "Sleeping";
 
-	sleep(1000);
+	sleep(10);
 
 }

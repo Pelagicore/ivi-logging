@@ -132,5 +132,6 @@ private:
 	LogLevel m_level;
 };
 
+std::string getStackTrace(unsigned int max_frames = 63);
 
 }

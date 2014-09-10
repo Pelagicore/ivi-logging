@@ -1,5 +1,6 @@
 add_library( ${LIB_NAME} SHARED
 	ivi-logging.cpp
+	backtrace.cpp
 	${DLT_LIBRARY_FILES}
 )
 

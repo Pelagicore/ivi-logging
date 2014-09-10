@@ -1,39 +1,42 @@
 #pragma once
 
 #include "ivi-logging.h"
+#include "ivi-logging-null.h"
 
 namespace logging {
+
+#define log_null NullLogData()
 
 /**
  * Generate a log with "fatal" severity
  */
-#define log_fatal(args ...)
+#define log_fatal(args ...) log_null
 
 /**
  * Generate a log with "error" severity
  */
-#define log_error(args ...)
+#define log_error(args ...) log_null
 
 /**
  * Generate a log with "verbose" severity
  */
-#define log_verbose(args ...)
+#define log_verbose(args ...) log_null
 
 /**
  * Generate a log with "info" severity
  */
-#define log_info(args ...)
+#define log_info(args ...) log_null
 
 /**
  * Generate a log with "warning" severity
  */
-#define log_warn(args ...)
-#define log_warning(args ...)
+#define log_warn(args ...) log_null
+#define log_warning(args ...) log_null
 
 /**
  * Generate a log with "debug" severity
  */
-#define log_debug(args ...)
+#define log_debug(args ...) log_null
 
 /**
  * Defines the identifiers of an application. This macro should be used at one place in every application.
