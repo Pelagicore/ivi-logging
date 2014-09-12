@@ -2,9 +2,12 @@
 
 #include <string>
 #include <functional>
+#include <sstream>
+
 #include "string.h"
 
 #include "ivi-logging-common.h"
+
 
 namespace logging {
 
@@ -27,6 +30,24 @@ inline std::string pointerToString(const void* p) {
 	return buffer;
 }
 
+class StringBuilder {
+public:
+	template<typename Type> StringBuilder& operator<<(const Type& v) {
+		m_stream << v;
+		return *this;
+	}
+
+	operator std::string() {
+		return m_stream.str();
+	}
+
+	operator const char*() {
+		return m_stream.str().c_str();
+	}
+
+	std::stringstream m_stream;
+
+};
 
 #define log_with_context(context, severity, args ...) \
 	for (auto dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
