@@ -6,6 +6,7 @@
 #include "ivi-logging-common.h"
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <exception>
 #include <type_traits>
@@ -27,6 +28,21 @@ LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 template<typename KeyType, typename ValueType, class LogDataType = logging::LogDataCommon, typename =
 		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::map<KeyType, ValueType>& v) {
+	log << " [ ";
+	for (auto& element : v) {
+		log<< " { ";
+		log << element.first;
+		log << " = ";
+		log << element.second;
+		log<< " }, ";
+	}
+	log << " ] ";
+	return log;
+}
+
+template<typename KeyType, typename ValueType, class LogDataType = logging::LogDataCommon, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const std::unordered_map<KeyType, ValueType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
 		log<< " { ";

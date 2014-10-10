@@ -37,6 +37,16 @@ public:
 		return *this;
 	}
 
+	StringBuilder& operator<<(const uint8_t& v) {
+		m_stream << (int)v;
+		return *this;
+	}
+
+	StringBuilder& operator<<(const int8_t& v) {
+		m_stream << (int)v;
+		return *this;
+	}
+
 	operator std::string() {
 		return m_stream.str();
 	}
