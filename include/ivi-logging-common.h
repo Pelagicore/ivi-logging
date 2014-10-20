@@ -78,17 +78,17 @@ public:
 
 	}
 
-	const char* getDescription() {
-		return m_description;
+	const char* getDescription() const {
+		return m_description.c_str();
 	}
 
-	const char* getID() {
-		return m_id;
+	const char* getID() const {
+		return m_id.c_str();
 	}
 
 private:
-	const char* m_id;
-	const char* m_description;
+	const std::string m_id;
+	const std::string m_description;
 
 };
 

@@ -59,9 +59,9 @@ public:
 
 };
 
-#define log_with_context(context, severity, args ...) \
-	for (auto dummy = &context; (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
-		context.createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).writeFormatted(args)
+#define log_with_context(_context_, severity, args ...) \
+	for (auto dummy = &(_context_); (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
+		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).writeFormatted(args)
 
 #ifndef log_error
 
