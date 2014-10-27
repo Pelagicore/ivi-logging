@@ -77,7 +77,7 @@ int generateDataForLogging() {
 
 int main(int argc, const char** argv) {
 
-	log_debug("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
+	log_debug().writeFormatted("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
 	log_error().writeFormatted("Another way to use the printf variant %i", 7345).writeFormatted(". Done");
 
 	log_error("This one is mixed. Here is a float : ") << 5.7F;
@@ -94,6 +94,9 @@ int main(int argc, const char** argv) {
 
 	MyClassWithImportedContext o2;
 	o2.doSomething();
+
+	std::string stdString = "That is a std::string";
+	log_error().write("Values can be passed at once to the write method", stdString, " " , 1234);
 
 	std::vector<char> charVector;
 	for (char i = '0'; i <= '0' + 40; i++)

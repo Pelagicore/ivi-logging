@@ -61,7 +61,7 @@ public:
 
 #define log_with_context(_context_, severity, args ...) \
 	for (auto dummy = &(_context_); (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
-		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).writeFormatted(args)
+		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).write(args)
 
 #ifndef log_error
 
@@ -246,18 +246,16 @@ public:
 		~LogData() {
 		}
 
-		void write() {
+		LogData& write() {
+			return *this;
 		}
 
 		template<typename Arg1, typename ... Args>
-		void write(Arg1 firstArg, Args ... remainingArguments) {
-			if ( m_context.isEnabled(m_level) ) {
-				operator<<(firstArg);
-				write(remainingArguments ...);
+		LogData& write(const Arg1& firstArg, const Args& ... remainingArguments) {
+			if ( m_context.isEnabled(getLogLevel()) ) {
+				*this << firstArg;
+				return write(remainingArguments ...);
 			}
-		}
-
-		LogData& writeFormatted() {
 			return *this;
 		}
 
