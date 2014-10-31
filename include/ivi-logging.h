@@ -13,7 +13,9 @@ namespace logging {
 
 template<size_t I = 0, typename Func, typename ... TupleTypes, typename ... CallArgumentTypes>
 typename std::enable_if<I == sizeof ... (TupleTypes)>::type
-for_each_in_tuple_(std::tuple<TupleTypes ...>&, Func, CallArgumentTypes& ... args) {
+for_each_in_tuple_(std::tuple<TupleTypes ...>& tpl, Func func, CallArgumentTypes& ... args) {
+	UNUSED(tpl);
+	UNUSED(func);
 }
 
 template<size_t I = 0, typename Func, typename ... TupleTypes, typename ... CallArgumentTypes>
@@ -51,9 +53,9 @@ public:
 		return m_stream.str();
 	}
 
-	operator const char*() {
-		return m_stream.str().c_str();
-	}
+//	operator const char*() {
+//		return m_stream.str().c_str();
+//	}
 
 	std::stringstream m_stream;
 
@@ -220,9 +222,11 @@ public:
 
 		template<size_t I = 0, typename ... CallArgumentTypes>
 		typename std::enable_if<I == sizeof ... (ContextTypes)>::type
-		for_each_init(std::tuple<LogDataTypes ...>&, LogContextT<ContextTypesClass<ContextTypes ...>,
+		for_each_init(std::tuple<LogDataTypes ...>& tpl, LogContextT<ContextTypesClass<ContextTypes ...>,
 									 ContextDataTypesClass<LogDataTypes ...> >& context,
 			      CallArgumentTypes& ... args) {
+			UNUSED(context);
+			UNUSED(tpl);
 		}
 
 		template<size_t I = 0, typename ... CallArgumentTypes>
@@ -274,7 +278,7 @@ public:
 		LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<LogDataTypes ...> >& m_context;
 	};
 
-	LogContextT(const char* id, const char* contextDescription) : LogContextCommon(id, contextDescription) {
+	LogContextT(const std::string& id, const std::string& contextDescription) : LogContextCommon(id, contextDescription) {
 		for_each_in_tuple_(m_contexts, setParentContextFunctor(), *this);
 	}
 
@@ -304,3 +308,4 @@ public:
 }
 
 #include "ivi-logging-types.h"
+#include "ivi-logging-null.h"

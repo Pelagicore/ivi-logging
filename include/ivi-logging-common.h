@@ -8,6 +8,10 @@
 
 namespace logging {
 
+template<typename Type> void UNUSED(const Type& v) {
+	(void) v;
+}
+
 #define LOGGING_WARNING_OUTPUT_PREFIX "Logging: "
 
 enum class LogLevel {
@@ -68,14 +72,13 @@ void setDefaultAPPIDSIfNeeded();
 class LogContextCommon {
 
 public:
-	LogContextCommon(const char* id, const char* contextDescription) : m_id(id), m_description(contextDescription) {
-		if (strlen(id) > 4)
+	LogContextCommon(const std::string& id, const std::string& contextDescription) : m_id(id), m_description(contextDescription) {
+		if (id.length() > 4)
 			fprintf(
 				stderr,
 				LOGGING_WARNING_OUTPUT_PREFIX
 				"Log IDs should not be longer than 4 characters to be compatible with the DLT : %s\n",
-				id);
-
+				id.c_str());
 	}
 
 	const char* getDescription() const {
