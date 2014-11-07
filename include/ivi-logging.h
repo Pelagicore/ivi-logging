@@ -16,6 +16,7 @@ typename std::enable_if<I == sizeof ... (TupleTypes)>::type
 for_each_in_tuple_(std::tuple<TupleTypes ...>& tpl, Func func, CallArgumentTypes& ... args) {
 	UNUSED(tpl);
 	UNUSED(func);
+	UNUSED(args...);
 }
 
 template<size_t I = 0, typename Func, typename ... TupleTypes, typename ... CallArgumentTypes>
@@ -57,6 +58,8 @@ public:
 //		return m_stream.str().c_str();
 //	}
 
+private:
+
 	std::stringstream m_stream;
 
 };
@@ -66,6 +69,8 @@ public:
 		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).write(args)
 
 #ifndef log_error
+
+#define log_with_severity(severity, args ...) log_with_context(getDefaultContext(), severity, ## args)
 
 /**
  * Generate a log with "fatal" severity
@@ -227,6 +232,7 @@ public:
 			      CallArgumentTypes& ... args) {
 			UNUSED(context);
 			UNUSED(tpl);
+			UNUSED(args ...);
 		}
 
 		template<size_t I = 0, typename ... CallArgumentTypes>

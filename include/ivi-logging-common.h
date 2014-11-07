@@ -8,8 +8,12 @@
 
 namespace logging {
 
-template<typename Type> void UNUSED(const Type& v) {
-	(void) v;
+inline void UNUSED() {
+}
+
+template<typename Type, typename ... Types> void UNUSED(const Type& firstValue, const Types& ... otherValues) {
+	(void) firstValue;
+	UNUSED(otherValues ...);
 }
 
 #define LOGGING_WARNING_OUTPUT_PREFIX "Logging: "
