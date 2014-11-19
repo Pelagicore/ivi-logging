@@ -1,8 +1,6 @@
 // stacktrace.h (c) 2008, Timo Bingmann from http://idlebox.net/
 // published under the WTFPL v2.0
 
-#pragma once
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <execinfo.h>

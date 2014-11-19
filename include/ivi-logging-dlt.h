@@ -117,16 +117,14 @@ public:
 		m_context = &context;
 		auto dltLogLevel = m_context->getDLTLogLevel( m_data->getLogLevel() );
 
-#ifdef DLT_2_10
+#ifdef DLT_2_9
+		m_enabled = dlt_user_log_write_start(m_context, this, dltLogLevel);
+#else
 		m_enabled = ( (m_context)->log_level_ptr && ( (dltLogLevel) <= (int)*( (m_context)->log_level_ptr ) ) &&
 			      ( (dltLogLevel) != 0 ) ); // TODO: get that expression from the DLT itself
 
 		if (m_enabled)
 			dlt_user_log_write_start(m_context, this, dltLogLevel);
-#elif DLT_2_9
-		m_enabled = dlt_user_log_write_start(m_context, this, dltLogLevel);
-#else
-#error "Unsupported DLT version"
 #endif
 	}
 
@@ -186,13 +184,13 @@ private:
 };
 
 inline bool DltContextClass::isEnabled(LogLevel logLevel) {
-#ifdef DLT_2_10
+#ifdef DLT_2_9
+	DltContextData d;
+	return dlt_user_log_write_start( this, &d, getDLTLogLevel(logLevel) );
+#else
 	auto dltLogLevel = getDLTLogLevel(logLevel);
 	return ( (this)->log_level_ptr && ( (dltLogLevel) <= (int)*( (this)->log_level_ptr ) ) &&
 		 ( (dltLogLevel) != 0 ) );    // TODO: get that expression from the DLT itself
-#elif DLT_2_9
-	DltContextData d;
-	return dlt_user_log_write_start( this, &d, getDLTLogLevel(logLevel) );
 #endif
 }
 

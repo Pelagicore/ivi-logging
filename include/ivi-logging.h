@@ -137,7 +137,9 @@ private:
 /**
  * Import the given context and set it as default for the current scope
  */
-#define LOG_IMPORT_DEFAULT_CONTEXT(context) LOG_IMPORT_CONTEXT(context); LOG_SET_DEFAULT_CONTEXT(context);
+#define LOG_IMPORT_DEFAULT_CONTEXT(context) \
+		LOG_IMPORT_CONTEXT(context) \
+		LOG_SET_DEFAULT_CONTEXT(context)
 
 /**
  * Set the given context as default for the current class
