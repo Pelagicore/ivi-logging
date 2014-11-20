@@ -196,7 +196,8 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 	struct writeFormattedFunctor {
 		template<typename T, typename ... Args>
 		void operator()(T && t, const char* format, Args ... args) {
-			t.writeFormatted(format, args ...);
+			if (t.isEnabled())  // We need to check each context here to ensure that we don't send data to a disabled context
+				t.writeFormatted(format, args ...);
 		}
 	};
 
@@ -213,14 +214,16 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 				LogContextT<ContextTypesClass<ContextTypes ...>,
 					    ContextDataTypesClass<LogDataTypes ...> >& context,
 				LogDataCommon& log) {
-			t.init(context, log);
+			if (t.isEnabled())  // We need to check each context here to ensure that we don't send data to a disabled context
+				t.init(context, log);
 		}
 	};
 
 	struct streamFunctor {
 		template<typename T, typename Type>
 		void operator()(T && t, const Type& v) {
-			t << v;
+			if (t.isEnabled())  // We need to check each context here to ensure that we don't send data to a disabled context
+				t << v;
 		}
 	};
 
