@@ -35,11 +35,11 @@ public:
 		m_level = level;
 	}
 
-	LogLevel getLogLevel() {
+	LogLevel getLogLevel() const {
 		return m_level;
 	}
 
-	virtual bool isEnabled(LogLevel level) {
+	virtual bool isEnabled(LogLevel level) const {
 		return ( level <= getLogLevel() );
 	}
 
@@ -74,7 +74,7 @@ public:
 		m_colorSupport = (getConsoleWidth() != 0);
 	}
 
-	bool isEnabled(LogLevel level) override {
+	bool isEnabled(LogLevel level) const override {
 		return ( StreamLogContextAbstract::isEnabled(level) && (level <= s_defaultLogLevel) );
 	}
 

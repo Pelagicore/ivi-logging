@@ -26,7 +26,7 @@ public:
 		m_context = &context;
 	}
 
-	bool isEnabled(LogLevel logLevel);
+	bool isEnabled(LogLevel logLevel) const;
 
 	static DltLogLevelType getDLTLogLevel(LogLevel level) {
 		DltLogLevelType v = DLT_LOG_DEFAULT;
@@ -142,7 +142,7 @@ public:
 		}
 	}
 
-	bool isEnabled() {
+	bool isEnabled() const {
 		return m_enabled;
 	}
 
@@ -174,7 +174,7 @@ private:
 
 };
 
-inline bool DltContextClass::isEnabled(LogLevel logLevel) {
+inline bool DltContextClass::isEnabled(LogLevel logLevel) const {
 #ifdef DLT_2_9
 	DltContextData d;
 	return dlt_user_log_write_start( this, &d, getDLTLogLevel(logLevel) );
@@ -191,6 +191,7 @@ inline DltLogData& operator<<(DltLogData& data, bool v) {
 }
 
 inline DltLogData& operator<<(DltLogData& data, const char* v) {
+	assert(data.isEnabled());
 	dlt_user_log_write_utf8_string(&data, v);
 	return data;
 }

@@ -25,6 +25,10 @@ public:
 		UNUSED(data);
 	}
 
+	bool isEnabled() const {
+		return false;
+	}
+
 };
 
 class NullLogContext {
