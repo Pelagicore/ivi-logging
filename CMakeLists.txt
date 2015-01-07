@@ -46,19 +46,13 @@ set(INCLUDE_FILES
 	include/ivi-logging-file.h
 	include/ivi-logging-common.h
 	include/ivi-logging-null.h
-	include/log-types.h
-	include/log-console.h
-	include/log-file.h
-	include/log-common.h
-	include/log-null.h
-	include/ByteArray.h
 	include/ivi-no-logging.h
+	include/ByteArray.h
 )
 
 if (${DLT_FOUND})
 	set(INCLUDE_FILES
 		${INCLUDE_FILES}
-		include/log-dlt.h
 		include/ivi-logging-dlt.h
 	)
 endif()
