@@ -213,7 +213,7 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 		void operator()(T && t,
 				LogContextT<ContextTypesClass<ContextTypes ...>,
 					    ContextDataTypesClass<LogDataTypes ...> >& context,
-				LogDataCommon& log) {
+						LogInfo& log) {
 			if (t.isEnabled())  // We need to check each context here to ensure that we don't send data to a disabled context
 				t.init(context, log);
 		}
@@ -228,7 +228,7 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 	};
 
 public:
-	class LogData : LogDataCommon {
+	class LogData : LogInfo {
 
 		template<size_t I = 0, typename ... CallArgumentTypes>
 		typename std::enable_if<I == sizeof ... (ContextTypes)>::type
@@ -254,7 +254,7 @@ public:
 				    ContextDataTypesClass<LogDataTypes ...> >& context, LogLevel level, const char* fileName,
 			int lineNumber,
 			const char* prettyFunction) :
-			LogDataCommon(level, fileName, lineNumber, prettyFunction), m_context(context) {
+				LogInfo(level, fileName, lineNumber, prettyFunction), m_context(context) {
 			for_each_init(m_contexts, context, *this);
 		}
 
@@ -282,6 +282,14 @@ public:
 
 		template<typename Type> LogData& operator<<(const Type& v) {
 			for_each_in_tuple_(m_contexts, streamFunctor(), v);
+			return *this;
+		}
+
+		/**
+		 * Used to support std::endl, std::ends, etc...
+		 */
+		LogData& operator<<(LogData& (*functionPtr)(LogData&)) {
+			functionPtr(*this);
 			return *this;
 		}
 

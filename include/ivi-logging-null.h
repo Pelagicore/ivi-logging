@@ -20,7 +20,7 @@ public:
 		return *this;
 	}
 
-	void init(NullLogContext& context, LogDataCommon& data) {
+	void init(NullLogContext& context, LogInfo& data) {
 		UNUSED(context);
 		UNUSED(data);
 	}

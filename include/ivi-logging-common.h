@@ -99,10 +99,10 @@ private:
 
 };
 
-class LogDataCommon {
+class LogInfo {
 
 public:
-	LogDataCommon(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
+	LogInfo(LogLevel level, const char* fileName, int lineNumber, const char* prettyFunction) {
 		m_level = level;
 		m_longFileName = fileName;
 		m_lineNumber = lineNumber;
@@ -138,6 +138,12 @@ private:
 	int m_lineNumber;
 	LogLevel m_level;
 };
+
+class LogData {
+};
+
+/// Deprecated : use LogData
+__attribute__ ((deprecated)) typedef LogData LogDataCommon;
 
 std::string getStackTrace(unsigned int max_frames = 63);
 

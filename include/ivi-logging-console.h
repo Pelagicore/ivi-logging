@@ -100,7 +100,7 @@ private:
 };
 
 
-class StreamLogData {
+class StreamLogData : public LogData {
 
 public:
 	static constexpr const char* DEFAULT_PREFIX = "%4.4s [%s] ";
@@ -137,7 +137,7 @@ public:
 		m_suffixFormat = format;
 	}
 
-	void init(StreamLogContextAbstract& aContext, LogDataCommon& data) {
+	void init(StreamLogContextAbstract& aContext, LogInfo& data) {
 		m_context = &aContext;
 		m_data = &data;
 
@@ -183,7 +183,7 @@ public:
 		return ( m_context->isEnabled( m_data->getLogLevel() ) );
 	}
 
-	LogDataCommon& getData() {
+	LogInfo& getData() {
 		return *m_data;
 	}
 
@@ -214,7 +214,7 @@ public:
 protected:
 	ContextType* m_context = nullptr;
 	ByteArray m_content;
-	LogDataCommon* m_data = nullptr;
+	LogInfo* m_data = nullptr;
 
 	const char* m_prefixFormat = DEFAULT_PREFIX;
 	//	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
@@ -296,6 +296,12 @@ inline StreamLogData& operator<<(StreamLogData& data, float v) {
 	return data;
 }
 
+inline StreamLogData& operator<<(StreamLogData& data, const std::string& s) {
+	if ( data.isEnabled() )
+		data.writeFormatted("%s", s.c_str());
+	return data;
+}
+
 inline StreamLogData& operator<<(StreamLogData& data, double v) {
 	if ( data.isEnabled() )
 		data.writeFormatted("%f", v);
@@ -311,7 +317,7 @@ public:
 		flushLog();
 	}
 
-	void init(ContextType& aContext, LogDataCommon& data) {
+	void init(ContextType& aContext, LogInfo& data) {
 		m_context = &aContext;
 		StreamLogData::init(aContext, data);
 	}

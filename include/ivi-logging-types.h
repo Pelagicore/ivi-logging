@@ -13,8 +13,8 @@
 
 namespace logging {
 
-template<typename ElementType, class LogDataType = logging::LogDataCommon, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+template<typename ElementType, class LogDataType = logging::LogData, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
@@ -25,8 +25,8 @@ LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 	return log;
 }
 
-template<typename KeyType, typename ValueType, class LogDataType = logging::LogDataCommon, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+template<typename KeyType, typename ValueType, class LogDataType = logging::LogData, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::map<KeyType, ValueType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
@@ -40,8 +40,8 @@ LogDataType& operator<<(LogDataType& log, const std::map<KeyType, ValueType>& v)
 	return log;
 }
 
-template<typename KeyType, typename ValueType, class LogDataType = logging::LogDataCommon, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+template<typename KeyType, typename ValueType, class LogDataType = logging::LogData, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::unordered_map<KeyType, ValueType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
@@ -56,39 +56,18 @@ LogDataType& operator<<(LogDataType& log, const std::unordered_map<KeyType, Valu
 }
 
 template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
-LogDataType& operator<<(LogDataType& log, const void* v) {
-	log << (size_t)v;
-	return log;
-}
-
-template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
-LogDataType& operator<<(LogDataType& log, const std::string& s) {
-	log << s.c_str();
-	return log;
-}
-
-template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::exception& ex) {
 	log << ex.what();
 	return log;
 }
-
-//template<typename LogDataType, typename =
-//		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
-//LogDataType& operator<<(LogDataType& log, const char a[]) {
-//	log << (const char*)&a[0];
-//	return log;
-//}
 
 }
 
 namespace std {
 
 template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+		 typename std::enable_if<std::is_base_of<logging::LogInfo, LogDataType>::value>::type>
 LogDataType&
   endl(LogDataType& log) {
 	log << "\n";
@@ -96,7 +75,7 @@ LogDataType&
   }
 
 template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+		 typename std::enable_if<std::is_base_of<logging::LogInfo, LogDataType>::value>::type>
 LogDataType&
   ends(LogDataType& log) {
 	// TODO : implement
@@ -104,19 +83,12 @@ LogDataType&
   }
 
 template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
+		 typename std::enable_if<std::is_base_of<logging::LogInfo, LogDataType>::value>::type>
 LogDataType&
   flush(LogDataType& log) {
 	// TODO : implement
 	return log;
   }
-
-template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogDataCommon, LogDataType>::value>::type>
-LogDataType& operator<<(LogDataType& log, LogDataType& (*functionPtr)(LogDataType&) ) {
-	functionPtr(log);
-	return log;
-}
 
 }
 

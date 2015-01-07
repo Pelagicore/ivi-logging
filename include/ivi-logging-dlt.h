@@ -90,7 +90,7 @@ private:
 };
 
 
-class DltLogData : public DltContextData {
+class DltLogData : public LogData, public DltContextData {
 
 public:
 	typedef DltContextClass ContextType;
@@ -112,7 +112,7 @@ public:
 		m_enableThreadInfo = enabled;
 	}
 
-	void init(DltContextClass& context, LogDataCommon& data) {
+	void init(DltContextClass& context, LogInfo& data) {
 		m_data = &data;
 		m_context = &context;
 		auto dltLogLevel = m_context->getDLTLogLevel( m_data->getLogLevel() );
@@ -167,10 +167,10 @@ public:
 
 private:
 	DltContextClass* m_context = nullptr;
-	LogDataCommon* m_data = nullptr;
+	LogInfo* m_data = nullptr;
 	bool m_enableSourceCodeLocationInfo = false;
 	bool m_enableThreadInfo = false;
-	bool m_enabled;
+	bool m_enabled = false;
 
 };
 
@@ -191,8 +191,12 @@ inline DltLogData& operator<<(DltLogData& data, bool v) {
 }
 
 inline DltLogData& operator<<(DltLogData& data, const char* v) {
-	assert(data.isEnabled());
 	dlt_user_log_write_utf8_string(&data, v);
+	return data;
+}
+
+inline DltLogData& operator<<(DltLogData& data, const std::string& v) {
+	data << v.c_str();
 	return data;
 }
 
