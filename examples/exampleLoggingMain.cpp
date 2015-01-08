@@ -16,7 +16,7 @@ LOG_DECLARE_CONTEXT(anotherContext, "CXT2", "Another context");
 namespace MyNamespace {
 
 // Instantiate a log context and define it as default for this module
-LOG_DECLARE_DEFAULT_CONTEXT(anotherContext, "MAI2", "This is a description of that logging context");
+LOG_DECLARE_DEFAULT_CONTEXT(defaultContextForSpecificNamespace, "MAI2", "This is a description of that logging context");
 
 void MyFunction() {
 	log_info() << "My function called";
@@ -96,7 +96,7 @@ int main(int argc, const char** argv) {
 	o2.doSomething();
 
 	std::string stdString = "That is a std::string";
-	log_error().write("Values can be passed at once to the write method", stdString, " " , 1234);
+	log_error().write("Values can be passed at once to the write method. ", stdString, " / " , 1234);
 
 	std::vector<char> charVector;
 	for (char i = '0'; i <= '0' + 40; i++)

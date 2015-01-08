@@ -7,6 +7,5 @@ First version
 -----
 
 - Add possibility to output thread information in logs.
+- Support STL's "std::endl", "std::ends", "std::flush"
 - 
-
-
