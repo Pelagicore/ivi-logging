@@ -13,12 +13,30 @@
 
 namespace logging {
 
+static constexpr const char* NULL_POINTER_STRING = "nullptr";
+
 template<typename ElementType, class LogDataType = logging::LogData, typename =
 		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::vector<ElementType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
 		log << element;
+		log << ", ";
+	}
+	log << " ] ";
+	return log;
+}
+
+template<typename ElementType, class LogDataType = logging::LogData, typename =
+		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const std::vector<ElementType*>& v) {
+	log << " [ ";
+	for (auto& element : v) {
+		if(element != nullptr)
+			log << *element;
+		else
+			log << NULL_POINTER_STRING;
+
 		log << ", ";
 	}
 	log << " ] ";
