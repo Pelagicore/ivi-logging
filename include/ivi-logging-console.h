@@ -70,8 +70,16 @@ public:
 
 	static const int DEFAULT_WIDTH = 150;
 
+	static constexpr const char* DISABLE_LOGGING_ENV_VAR_NAME = "DISABLE_LOGGING_CONSOLE";
+
 	ConsoleLogContext() {
 		m_colorSupport = (getConsoleWidth() != 0);
+		if(!s_envVarCheckDone) {
+			if (getenv(DISABLE_LOGGING_ENV_VAR_NAME) != nullptr) {
+				s_defaultLogLevel = LogLevel::None;
+			}
+			s_envVarCheckDone = true;
+		}
 	}
 
 	bool isEnabled(LogLevel level) const override {
@@ -96,6 +104,7 @@ public:
 
 private:
 	static LogLevel s_defaultLogLevel;
+	static bool s_envVarCheckDone;
 	bool m_colorSupport;
 };
 

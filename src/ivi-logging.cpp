@@ -11,6 +11,7 @@ namespace logging {
 AppLogContext* s_pAppLogContext = nullptr;
 
 LogLevel ConsoleLogContext::s_defaultLogLevel = LogLevel::All;
+bool ConsoleLogContext::s_envVarCheckDone = false;
 
 std::mutex StreamLogContextAbstract::m_outputMutex;
 
