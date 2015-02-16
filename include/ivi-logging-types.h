@@ -74,10 +74,17 @@ LogDataType& operator<<(LogDataType& log, const std::unordered_map<KeyType, Valu
 }
 
 template<typename LogDataType, typename =
-		 typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
+         typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
 LogDataType& operator<<(LogDataType& log, const std::exception& ex) {
-	log << ex.what();
-	return log;
+    log << ex.what();
+    return log;
+}
+
+template<typename LogDataType, typename =
+         typename std::enable_if<std::is_base_of<logging::LogData, LogDataType>::value>::type>
+LogDataType& operator<<(LogDataType& log, const StringBuilder& b) {
+    log << b.str();
+    return log;
 }
 
 }

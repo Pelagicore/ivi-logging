@@ -54,9 +54,9 @@ public:
 		return m_stream.str();
 	}
 
-//	operator const char*() {
-//		return m_stream.str().c_str();
-//	}
+	std::string str() const {
+	    return m_stream.str();
+	}
 
 private:
 
