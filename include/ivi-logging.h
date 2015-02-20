@@ -8,7 +8,6 @@
 
 #include "ivi-logging-common.h"
 
-
 namespace logging {
 
 template<size_t I = 0, typename Func, typename ... TupleTypes, typename ... CallArgumentTypes>
@@ -228,6 +227,13 @@ class LogContextT<ContextTypesClass<ContextTypes ...>, ContextDataTypesClass<Log
 	};
 
 public:
+
+	/**
+	 * Use that typedef to extend a LogContext type by adding a backend to it.
+	 */
+    template<typename ExtraContextType, typename ExtraDataType> using Extension = typename LogContextT<ContextTypesClass<ContextTypes ..., ExtraContextType>,
+            ContextDataTypesClass<LogDataTypes ..., ExtraDataType> >::LogContextT;
+
 	class LogData : LogInfo {
 
 		template<size_t I = 0, typename ... CallArgumentTypes>
@@ -248,7 +254,6 @@ public:
 			std::get<I>(tpl).init(std::get<I>(context.m_contexts), args ...);
 			for_each_init<I + 1>(tpl, context, args ...);
 		}
-
 public:
 		LogData(LogContextT<ContextTypesClass<ContextTypes ...>,
 				    ContextDataTypesClass<LogDataTypes ...> >& context, LogLevel level, const char* fileName,
@@ -328,3 +333,6 @@ public:
 
 #include "ivi-logging-types.h"
 #include "ivi-logging-null.h"
+
+#include "ivi-logging-config.h"
+

@@ -1,0 +1,41 @@
+#pragma once
+
+#include "ivi-logging.h"
+
+#ifdef IVI_LOGGING_DLT_AVAILABLE
+#include "ivi-logging-dlt.h"
+#endif
+
+#include "ivi-logging-console.h"
+#include "ivi-logging-null.h"
+
+namespace logging {
+
+using namespace logging;
+
+class DefaultConsoleLogContext : public ConsoleLogContext {
+public:
+	DefaultConsoleLogContext() {
+		// Enable debug logs for the console output, which are disabled by default
+		setLogLevel(LogLevel::Debug);
+	}
+
+};
+
+class DefaultConsoleLogData : public ConsoleLogData {
+public:
+	DefaultConsoleLogData() {
+		//		setPrefixFormat("[%s] %.4s | ");
+		//		setSuffixFormat("  %s / %s - %d");
+	}
+
+	//	void writePrefix() override {	}
+	//	void writeSuffix() override {	}
+
+};
+
+typedef LogContextT<
+	TypeSet<@CONSOLE_OR_NULL@, @DLT_OR_NULL@>, TypeSet<@CONSOLE_OR_NULL@::LogDataType, @DLT_OR_NULL@::LogDataType> > DefaultLogContext;
+
+}
+

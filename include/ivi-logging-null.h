@@ -10,7 +10,7 @@ class NullLogContext;
  * This class provides the same interface as other LogData classes, but actually does nothing with the objects which are streamed to it.
  * It can be useful to disable some logging.
  */
-class NullLogData {
+class NullLogData : public LogData {
 
 public:
 
@@ -28,6 +28,10 @@ public:
 	bool isEnabled() const {
 		return false;
 	}
+
+    template<typename ... Args>
+    void writeFormatted(const char* format, Args ... args) {
+    }
 
 };
 
