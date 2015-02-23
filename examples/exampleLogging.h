@@ -1,11 +1,6 @@
 #pragma once
 
-#include "ivi-logging.h"
-
-/**
- * We define our actual LogContext type, which defines the list of backends to use for the logging. Here, we simply reuse the default list of backends
- */
-typedef logging::DefaultLogContext LogContext;
+#include "logging.h"
 
 // Import the application's contexts so that they can be used in any file which includes this header
 LOG_IMPORT_CONTEXT(mainContext);

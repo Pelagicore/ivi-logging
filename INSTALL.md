@@ -5,7 +5,7 @@ Dependencies
 The following packages need to be installed in order to be able to compile this package
 - cmake
 - pkg-config
-- g++ or clang
+- g++ or clang (with C++11 support)
 - doxygen (for documentation generation)
 
 On Ubuntu or debian, those dependencies can be installed with the following command: 
@@ -17,6 +17,20 @@ If you want support for the DLT, that package needs to be installed (http://proj
 	$ sudo apt-get install libz-dev
 ```
 
+
+Configuration options
+---------------------
+
+The following switches can be used to customize the way the package is built:
+- ENABLE_DLT_BACKEND : "Include DLT as default logging backend". Default value : OFF
+- ENABLE_CONSOLE_BACKEND : "Include DLT as default logging backend". Default value : ON
+
+In order to enable a switch, use -DSWITCH_NAME=ON/OFF when you inovke the cmake command.
+
+Example to enable the DLT:
+-DENABLE_DLT_BACKEND=ON
+
+
 Build
 -----
 
@@ -24,7 +38,7 @@ Here are instructions on how to build the package:
 ```
 	$ mkdir build
 	$ cd build
-	$ cmake ../ -DCMAKE_INSTALL_PREFIX=/My/Installation/Location -DENABLE_DOC=1
+	$ cmake -DCMAKE_INSTALL_PREFIX=/My/Installation/Location ..
 	$ make install
 ```
 
@@ -42,5 +56,4 @@ When building and installing the package, the following should be installed:
 Testing
 -------
 
-To test whether the package has been correctly installed, you can start the example application ("/usr/bin/logging-example"), which should simply print a few logs to the console and also to the DLT (only if DLT is installed on your system) and exit.
-
+To test whether the package has been correctly installed, you can start the example application ("/usr/bin/logging-example"), which should simply print a few logs to the console and also to the DLT (only if the ENABLE_DLT_BACKEND switch is enabled) and exit.

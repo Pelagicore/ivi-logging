@@ -33,10 +33,16 @@ The following requirements are fulfilled by that package:
 * The format of the console or file log entries should be customizable.
 * The logs should contain optional source code information (file name, line number).
 
+#Default configuration
+
+The list of backends used to send logs to can be freely set by packages at build time. However, the ivi-logging packages provides a default configuration which can be used "as-is" by packages using the ivi-logging. That provides a way to centralize the configuration so that all packages use the same backends.
+Typically, a "production" build would use only the DLT backend, whereas a "development" build would also enable the logging to the console to help debugging in command-line for example. That distinction between the various builds can be centralized in the configuration of ivi-logging instead of being spread over many packages.
+Please see the install file for information about how to customize that default configuration : [INSTALL.md](./INSTALL.md)
+
 #Usage
 
 In order to start using the logging component from your application, you need to:
-* Include the "ivi-logging.h" header
+* Define a type called "LogContext" and ensure that this type is accessible in the current scope. That type defines the class to be used for the logging. Typical applications would have a file called "logging.h" which reuse the default configuration provided by the ivi-logging package. Example: [logging.h](./examples/logging.h)
 * Optionally define the 4 characters unique ID (if only one instance of your application is going to run), which is going to be used especially by the DLT backend as application ID. This is achieved by using the following macro:
 ```LOG_DEFINE_APP_IDS("MyAp", "Description of my application");```
 * Declare at least one logging context by using the following macro:
