@@ -1,5 +1,5 @@
 
-OPTION( INSTALL_DOC "Enable Doxygen documentation installation" OFF )
+OPTION( INSTALL_DOC "Enable the installation of Doxygen documentation" OFF )
 
 # Add a doxygen documentation to the targets to be built and installed.
 # The packageName parameter defines the name of the package
@@ -50,4 +50,4 @@ macro(add_doxygen_doc packageName sourceCodePath examplesPath)
 endmacro()
 
 
-add_doxygen_doc(${PACKAGE} "${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR}/../README.md" "${CMAKE_CURRENT_SOURCE_DIR}/../examples ${CMAKE_CURRENT_SOURCE_DIR}/..")
+add_doxygen_doc(${PACKAGE} "${CMAKE_CURRENT_SOURCE_DIR}/../README.md ${CMAKE_CURRENT_SOURCE_DIR}/../INSTALL.md ${CMAKE_CURRENT_SOURCE_DIR}/../MAINTAINERS.md ${CMAKE_CURRENT_SOURCE_DIR}/.." "${CMAKE_CURRENT_SOURCE_DIR}/../examples/basic ${CMAKE_CURRENT_SOURCE_DIR}/../examples/file ${CMAKE_CURRENT_SOURCE_DIR}/..")

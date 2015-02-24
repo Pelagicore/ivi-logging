@@ -5,7 +5,7 @@
 #include <iostream>
 
 // If an application is not multi-instance, we can define its unique identifier
-LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use IVI-Log");
+LOG_DEFINE_APP_IDS("MyAp", "This is a small application showing how to use ivi-logging");
 
 // Instantiate a log context and define it as default for this module
 LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAIN", "This is a description of that logging context");
@@ -49,12 +49,23 @@ struct MySubClass : MyClass {
 
 struct MyClassWithImportedContext {
 
-	// Define the log context to be used for that class. This overrides any default context which might have previously be set
-	LOG_SET_CLASS_CONTEXT(anotherContext);
+    // Define the log context to be used for that class. This overrides any default context which might have previously be set
+    LOG_SET_CLASS_CONTEXT(anotherContext);
 
-	void doSomething() {
-		log_debug() << "We are doing something. Imported context"; // This log uses the class log context
-	}
+    void doSomething() {
+        log_debug() << "We are doing something. Imported context"; // This log uses the class log context
+    }
+
+};
+
+struct SecondClassWithImportedContext {
+
+    // Define the log context to be used for that class. This overrides any default context which might have previously be set
+    LOG_SET_CLASS_CONTEXT(anotherContext);
+
+    void doSomething() {
+        log_debug() << "We are doing something. Imported context"; // This log uses the class log context
+    }
 
 };
 
@@ -92,8 +103,11 @@ int main(int argc, const char** argv) {
 	o.doSomething();
 	o.doSomethingElse();
 
-	MyClassWithImportedContext o2;
-	o2.doSomething();
+    MyClassWithImportedContext o2;
+    o2.doSomething();
+
+    SecondClassWithImportedContext o3;
+    o3.doSomething();
 
 	std::string stdString = "That is a std::string";
 	log_error().write("Values can be passed at once to the write method. ", stdString, " / " , 1234);
@@ -107,6 +121,12 @@ int main(int argc, const char** argv) {
 	MyNamespace::MyFunction();
 
 	log_fatal() << "A fatal log";
+
+	std::vector<MyClass*> vectorOfPointers;
+	vectorOfPointers.push_back(new MyClass());
+	vectorOfPointers.push_back(new MyClass());
+
+	log_debug() << vectorOfPointers;
 
 	log_warn() << generateDataForLogging();
 	log_verbose() << generateDataForLogging();

@@ -1,3 +1,6 @@
+Change log
+==========
+
 1.1.1
 -----
 - Setting the environment variable "DISABLE_LOGGING_CONSOLE" to any value disables the output to the console.

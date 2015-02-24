@@ -21,6 +21,10 @@ public:
     }
 
     static void openFile(const char* fileName) {
+        openFile(fileName);
+    }
+
+    static void setFilePath(const char* fileName) {
         if (getFileStatic() == nullptr) {
             getFileStatic() = fopen(fileName, "w");
         }

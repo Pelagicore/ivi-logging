@@ -1,6 +1,6 @@
 
-Introduction
-------------
+Introduction    {#mainpage}
+============
 
 IVI-Logging is a software which facilitates the generation of log data. It provides an easy-to-use C++ API enabling you to send log data to various channels such as to the console, files, or GENIVI's DLT (http://projects.genivi.org/diagnostic-log-trace).
 Since application code does not rely directly on any specific logging backend, very little to no modification is needed to change the actual backends used to send the log data.
@@ -10,7 +10,7 @@ building the package (see the file "INSTALL.md"). Open the file "doc/doxygen/htm
 
 
 Backends
---------
+========
 
 The following channels can be used as log output:
 * DLT
@@ -21,7 +21,7 @@ The following channels can be used as log output:
 Any combination of these backends can be used if several backends are needed (logging to console + DLT for example). 
 
 Fulfilled requirements
-----------------------
+======================
 
 The following requirements are fulfilled by that package:
 * An API similar to Qt's QDebug and STL's logging APIs should be provided.
@@ -37,17 +37,17 @@ The following requirements are fulfilled by that package:
 * The logs should contain optional source code information (file name, line number).
 
 Default configuration
----------------------
+=====================
 
 The list of backends used to send logs to can be freely set by packages at build time. However, the ivi-logging packages provides a default configuration which can be used "as-is" by packages using the ivi-logging. That provides a way to centralize the configuration so that all packages use the same backends.
 Typically, a "production" build would use only the DLT backend, whereas a "development" build would also enable the logging to the console to help debugging in command-line for example. That distinction between the various builds can be centralized in the configuration of ivi-logging instead of being spread over many packages.
 Please see the install file for information about how to customize that default configuration : [INSTALL.md](./INSTALL.md)
 
 Usage
------
+=====
 
 In order to start using the logging component from your application, you need to:
-* Define a type called "LogContext" and ensure that this type is accessible in the current scope. That type defines the class to be used for the logging. Typical applications would have a file called "logging.h" which reuses the default configuration provided by the ivi-logging package. Example: [logging.h](./examples/logging.h)
+* Define a type called "LogContext" and ensure that this type is accessible in the current scope. That type defines the class to be used for the logging. Typical applications would have a file called "logging.h" which reuses the default configuration provided by the ivi-logging package. Example: [logging.h](./examples/basic/logging.h)
 * Optionally define the 4 characters unique ID (if only one instance of your application is going to run), which is going to be used especially by the DLT backend as application ID. This is achieved by using the following macro:
 ```LOG_DEFINE_APP_IDS("MyAp", "Description of my application");```
 * Declare at least one logging context by using the following macro:
@@ -59,7 +59,8 @@ In order to start using the logging component from your application, you need to
   * ```log_info() << "Here is an info log";```
   * ```log_verbose() << "Here is a verbose log";```
 
-##Default context
+Default context
+---------------
 
 In order to use the macros such as log_debug(), a context needs to be set as "default" for the current scope. To set a context as default, several possibilities exist, depending on the situation:
 * ```LOG_SET_DEFAULT_CONTEXT(context)```
@@ -69,25 +70,25 @@ In order to use the macros such as log_debug(), a context needs to be set as "de
 See the example below to understand when each of these macros can be used.
 
 Usage - Examples
-----------------
+================
 
 Here is an example of file producing log data:
-[exampleLoggingMain.cpp](./examples/exampleLoggingMain.cpp)
+[exampleLoggingMain.cpp](./examples/basic/exampleLoggingMain.cpp)
 
 
 Installation
-------------
+============
 
 Please see that file : [INSTALL.md](./INSTALL.md)
 
 License
--------
+=======
 
 This software is Free Software licensed under the Mozilla Public License 2.0
 
 
 TODO
-----
+====
 
 * It should be possible to enable the output of source code information (file name, line number) dynamically (via the DLT-viewer for example). However, it should also be possible to compile applications without the source code information since that information increases the code size.
 * Support for logging to syslog.
