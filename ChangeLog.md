@@ -1,6 +1,6 @@
 1.1.1
 -----
-- Setting the environment variable "DISABLE_LOGGING_CONSOLE" to any value no disables the output to the console.
+- Setting the environment variable "DISABLE_LOGGING_CONSOLE" to any value disables the output to the console.
 
 1.1.0
 -----

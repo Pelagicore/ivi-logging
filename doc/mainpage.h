@@ -4,9 +4,7 @@
 
 \section Introduction
 
-\include "README.md"
-
-See the following example to understand when each of these macro can be used.
+See introduction page
 
 \section Example Example
 \include "exampleLoggingMain.cpp"

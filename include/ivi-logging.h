@@ -329,6 +329,12 @@ public:
 	bool m_bRegistered = false;
 
 };
+
+/**
+ * Use this context definition to completely disable the logging
+ */
+typedef LogContextT<TypeSet<>, TypeSet<> > NoLoggingLogContext;
+
 }
 
 #include "ivi-logging-types.h"
