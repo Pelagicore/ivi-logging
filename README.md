@@ -47,7 +47,7 @@ Usage
 =====
 
 In order to start using the logging component from your application, you need to:
-* Define a type called "LogContext" and ensure that this type is accessible in the current scope. That type defines the class to be used for the logging. Typical applications would have a file called "logging.h" which reuses the default configuration provided by the ivi-logging package. Example: [logging.h](./examples/basic/logging.h)
+* Define a type called "LogContext" and ensure that this type is accessible in the current scope. That type defines the class to be used for the logging. Typical applications would have a file called "logging.h" which reuses the default configuration provided by the ivi-logging package. Example: [logging.h](./examples/basic/logging-basic.h)
 * Optionally define the 4 characters unique ID (if only one instance of your application is going to run), which is going to be used especially by the DLT backend as application ID. This is achieved by using the following macro:
 ```LOG_DEFINE_APP_IDS("MyAp", "Description of my application");```
 * Declare at least one logging context by using the following macro:

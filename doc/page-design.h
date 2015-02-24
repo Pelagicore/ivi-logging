@@ -22,7 +22,8 @@ currently not possible to add a backend at runtime.
 \subsection Diagrams
 
 Since the library makes heavy use of C++11 variadic templates, it is pretty hard to provide a generic class diagram.
-In IVI systems, the typical use case is that ivi-logging uses two backends : DLT and console (stdout/stderr).
+In IVI systems, the typical use case is that ivi-logging uses two backends : DLT and console (stdout/stderr). That is the use case
+which we are going to focus on here.
 
 TODO
 
