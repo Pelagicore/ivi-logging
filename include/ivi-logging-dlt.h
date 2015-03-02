@@ -116,7 +116,7 @@ public:
 		m_data = &data;
 		m_context = &context;
 		auto dltLogLevel = m_context->getDLTLogLevel( m_data->getLogLevel() );
-		m_enabled = (dlt_user_log_write_start(m_context, this, dltLogLevel) >= 0);
+		m_enabled = (dlt_user_log_write_start(m_context, this, dltLogLevel) > 0);
 	}
 
 	virtual ~DltLogData() {
