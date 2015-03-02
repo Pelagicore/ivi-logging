@@ -135,11 +135,18 @@ int main(int argc, const char** argv) {
 	log_info() << "A log with std::ends" << std::ends;
 	log_info() << "A log with std::flush" << std::flush;
 
+    static const int DURATION = 10000;
+
+    log_info() << "Waiting " << DURATION << " seconds";
+
+    for(int i = DURATION ; i>0 ; i--) {
+        log_info() << i << " seconds before termination";
+        sleep(1);
+    }
+
 	disableConsoleLogging();
 	log_error() << "This log should not visible in the console";
 
-	log_info() << "Sleeping";
-
-	sleep(10);
+	log_info() << "We are done. Bye";
 
 }
