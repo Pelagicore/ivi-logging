@@ -37,5 +37,9 @@ public:
 typedef LogContextT<
 	TypeSet<@CONSOLE_OR_NULL@, @DLT_OR_NULL@>, TypeSet<@CONSOLE_OR_NULL@::LogDataType, @DLT_OR_NULL@::LogDataType> > DefaultLogContext;
 
+/// Use that type to output to the DLT if DLT is enabled, or to 
+typedef LogContextT<
+	TypeSet<@DLT_OR_NULL@>, TypeSet<@DLT_OR_NULL@::LogDataType> > DltIfEnabledLogContext;
+
 }
 
