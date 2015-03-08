@@ -8,4 +8,4 @@ Description: IVI Logging
 Version: @VERSION@
 Requires: @ADDITIONAL_PKGCONFIG_DEPENDENCIES@
 Libs: -livi-logging @DEVELOPMENT_LIBRARY_PATH@ -L${libdir}
-Cflags: -std=c++11 @ADDITIONAL_PKGCONFIG_CFLAGS@ @DEVELOPMENT_INCLUDE_PATH@ -I${includedir}/ivi-logging
+Cflags: @ADDITIONAL_PKGCONFIG_CFLAGS@ @DEVELOPMENT_INCLUDE_PATH@ -I${includedir}/ivi-logging
