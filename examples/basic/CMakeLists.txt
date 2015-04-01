@@ -11,4 +11,4 @@ TARGET_LINK_LIBRARIES( logging-example
 )
 
 install(TARGETS logging-example
-		DESTINATION bin)
+		DESTINATION ${CMAKE_INSTALL_BINDIR})
