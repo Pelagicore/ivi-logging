@@ -10,6 +10,20 @@ namespace logging {
 class StreamLogData;
 class ConsoleLogData;
 
+static constexpr const char ANSI_COLOR_OFF[] = "\x1b[0m";
+static constexpr const char ANSI_COLOR_BLACK[] = "\x1b[30m";
+static constexpr const char ANSI_COLOR_RED[] = "\x1b[31m";
+static constexpr const char ANSI_COLOR_GREEN[] = "\x1b[32m";
+static constexpr const char ANSI_COLOR_YELLOW[] = "\x1b[33m";
+static constexpr const char ANSI_COLOR_BLUE[] = "\x1b[34m";
+static constexpr const char ANSI_COLOR_MAGENTA[] = "\x1b[35m";
+static constexpr const char ANSI_COLOR_CYAN[] = "\x1b[36m";
+static constexpr const char ANSI_COLOR_GRAY[] = "\x1b[37m";
+static constexpr const char ANSI_COLOR_BRIGHT[] = "\x1b[1m";
+static constexpr const char ANSI_COLOR_DIM[] = "\x1b[2m";
+static constexpr const char ANSI_BLINK[] = "\x1b[5m";
+static constexpr const char ANSI_RESET_BRIGHT[] = "\x1b[0m";
+
 class StreamLogContextAbstract {
 public:
 	StreamLogContextAbstract() {
@@ -340,14 +354,15 @@ public:
 	};
 
 	virtual void writePrefix() override {
-
-		if ( m_context->isColorsEnabled() )
-			changeCurrentColor(Command::RESET, getColor( m_data->getLogLevel() ), Color::BLACK);
-
+	    writeHeaderColor();
 		StreamLogData::writePrefix();
+        resetColor();
 	}
 
 	virtual void writeSuffix() override {
+
+	    writeFooterColor();
+
 		ByteArray suffixArray = getSuffix();
 
 		int width = m_context->getConsoleWidth();
@@ -356,7 +371,7 @@ public:
 		if (width == 0)
 			width = ContextType::DEFAULT_WIDTH;
 
-		width -= m_content.size() + suffixArray.size() - m_colorCharacterCount;
+		width -= m_content.size() + suffixArray.size() - m_invisibleCharacterCount;
 
 		// If the output line is longer that the console width, we print our suffix on the next line
 		if (width < 0) {
@@ -369,28 +384,41 @@ public:
 		}
 
 		writeFormatted( "%s", suffixArray.getData() );
+
+        resetColor();
+
 	}
 
-	void changeCurrentColor(Command attr, Color fg, Color bg) {
-		char colorString[32];
-		snprintf(colorString, sizeof(colorString), "%c[%d;%d;%dm", 0x1B, attr, static_cast<int>(fg) + 30,
-			 static_cast<int>(bg) + 40);
-		writeFormatted("%s", colorString);
-		m_colorCharacterCount += strlen(colorString);
-	}
+    void writeHeaderColor() {
+        if ( !m_context->isColorsEnabled() )
+            return;
 
-	static Color getColor(LogLevel logLevel) {
-		Color c = Color::WHITE;
-		switch (logLevel) {
-		case LogLevel::Warning : c = Color::RED; break;
-		case LogLevel::Error : c = Color::RED; break;
-		case LogLevel::Verbose : c = Color::GREEN; break;
-		default :         c = Color::WHITE;
-		}
-		return c;
-	}
+        const char* s = ANSI_COLOR_OFF;
+        switch (m_data->getLogLevel()) {
+        case LogLevel::Warning : s = ANSI_COLOR_MAGENTA ; break;
+        case LogLevel::Error :
+        case LogLevel::Fatal: s = concatenate<ANSI_COLOR_RED, ANSI_COLOR_BRIGHT>(); break;
+        case LogLevel::Verbose : s = ANSI_COLOR_GREEN; break;
+        default: s = ANSI_COLOR_OFF; break;
+        }
+        *this << s;
+        m_invisibleCharacterCount += strlen(s);
+    }
 
-	int m_colorCharacterCount = 0;
+    void writeFooterColor() {
+        writeHeaderColor();
+    }
+
+    void resetColor() {
+        if ( !m_context->isColorsEnabled() )
+            return;
+
+        auto s = concatenate<ANSI_COLOR_OFF, ANSI_RESET_BRIGHT>();
+        *this << s;
+        m_invisibleCharacterCount += strlen(s);
+    }
+
+	int m_invisibleCharacterCount = 0;
 	ContextType* m_context;
 
 };
