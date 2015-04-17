@@ -128,9 +128,9 @@ class StreamLogData : public LogData {
 public:
 	static constexpr const char* DEFAULT_PREFIX = "%4.4s [%s] ";
 
-	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = "| %.2i | %s / %s - %d\n";
-	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = "| %s%.0s:%d | %.2i%.0s\n";
-	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME = "| %s%.0s - %d | %.2i-%.16s\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = " [ %.2i | %s / %s - %d ]\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = " [ %s%.0s:%d | %.2i%.0s ]\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME = " [ %s%.0s - %d | %.2i-%.16s ]\n";
 	static constexpr const char* DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION = "\n";
 
 	typedef StreamLogContextAbstract ContextType;

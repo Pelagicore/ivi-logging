@@ -21,7 +21,7 @@ public:
     }
 
     static void openFile(const char* fileName) {
-        openFile(fileName);
+        setFilePath(fileName);
     }
 
     static void setFilePath(const char* fileName) {
@@ -31,6 +31,7 @@ public:
         assert(getFileStatic() != nullptr);
     }
 
+private:
     static FILE*& getFileStatic() {
         static FILE* m_file;
         return m_file;

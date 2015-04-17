@@ -27,7 +27,7 @@ The following requirements are fulfilled by that package:
 * An API similar to Qt's QDebug and STL's logging APIs should be provided.
 * An API similar to libc's printf() should be provided.
 * The API used to produce logs should be the same, whatever channel is actually used as output.
-* Support the DLT's "context" concept. An application can use several logging contexts. Each context is identified by a 4 characters ID, and a longer textual description. The log level of each context can be adjusted at runtime.
+* Support the DLT's "context" concept. An application can use several logging contexts to categorize its logs. Each context is identified by a 4 characters ID, and a longer textual description. The log level of each context can be adjusted at runtime.
 * When logging to DLT only, the C++ API should introduce little to no overhead compared to the DLT's C macro based API.
 * It should be possible to build an application with the logging completely disabled, without changing the application code. Once disabled, the application binary code should be as small as if the lines of codes producing the logs were completely removed.
 * If no application ID is provided, an ID containing the PID should be automatically assigned.
