@@ -195,6 +195,12 @@ inline DltLogData& operator<<(DltLogData& data, const char* v) {
 	return data;
 }
 
+template<size_t N>
+inline StreamLogData& operator<<(DltLogData& data, const char (&v)[N]) {
+   data << (const char*) v;
+   return data;
+}
+
 inline DltLogData& operator<<(DltLogData& data, const std::string& v) {
 	data << v.c_str();
 	return data;

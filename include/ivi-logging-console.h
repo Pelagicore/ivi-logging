@@ -174,7 +174,7 @@ public:
 	}
 
 	virtual void writeSuffix() {
-		writeFormatted( (const char*)getSuffix().getData() );
+		writeFormatted( getSuffix().getData() );
 	}
 
 	virtual ByteArray getSuffix() {
@@ -253,6 +253,7 @@ inline FILE* ConsoleLogContext::getFile(StreamLogData& data) {
 		return stdout;
 }
 
+
 inline StreamLogData& operator<<(StreamLogData& data, bool v) {
 	if ( data.isEnabled() )
 		data.writeFormatted("%s", v ? "true" : "false");
@@ -311,6 +312,12 @@ inline StreamLogData& operator<<(StreamLogData& data, const char* v) {
 	if ( data.isEnabled() )
 		data.writeFormatted("%s", v ? v : "null");
 	return data;
+}
+
+template<size_t N>
+inline StreamLogData& operator<<(StreamLogData& data, const char (&v)[N]) {
+   data << (const char*) v;
+   return data;
 }
 
 inline StreamLogData& operator<<(StreamLogData& data, float v) {
