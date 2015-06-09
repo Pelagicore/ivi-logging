@@ -196,7 +196,7 @@ inline DltLogData& operator<<(DltLogData& data, const char* v) {
 }
 
 template<size_t N>
-inline StreamLogData& operator<<(DltLogData& data, const char (&v)[N]) {
+inline DltLogData& operator<<(DltLogData& data, const char (&v)[N]) {
    data << (const char*) v;
    return data;
 }
