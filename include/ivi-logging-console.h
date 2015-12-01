@@ -2,8 +2,8 @@
 
 #include "ivi-logging-common.h"
 #include "stdio.h"
-#include "ByteArray.h"
 #include <mutex>
+#include "ivi-logging-utils.h"
 
 namespace logging {
 

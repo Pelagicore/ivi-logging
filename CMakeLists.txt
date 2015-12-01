@@ -20,12 +20,12 @@ OPTION( ENABLE_CONSOLE_BACKEND "Include console as default logging backend" ON )
 FIND_PACKAGE(PkgConfig REQUIRED)
 if (ENABLE_DLT_BACKEND)
 	pkg_check_modules(DLT REQUIRED automotive-dlt)
-	add_definitions(${DLT_CFLAGS_OTHER} -DIVI_LOGGING_DLT_AVAILABLE)
+	add_definitions(${DLT_CFLAGS_OTHER})
 	include_directories(${DLT_INCLUDE_DIRS})
 	link_directories(${DLT_LIBRARY_DIRS})
 
 	set(ADDITIONAL_PKGCONFIG_DEPENDENCIES automotive-dlt)
-	set(ADDITIONAL_PKGCONFIG_CFLAGS -DIVI_LOGGING_DLT_AVAILABLE)
+	set(BACKEND_DEFINES "#define IVI_LOGGING_DLT_AVAILABLE")
 
 	set(DLT_OR_NULL DltContextClass)
 
@@ -56,8 +56,8 @@ set(INCLUDE_FILES
 	include/ivi-logging-file.h
 	include/ivi-logging-common.h
 	include/ivi-logging-null.h
+	include/ivi-logging-utils.h
 	include/ivi-no-logging.h
-	include/ByteArray.h
 	${CMAKE_CURRENT_BINARY_DIR}/ivi-logging-config.h
 )
 

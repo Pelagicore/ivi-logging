@@ -1,13 +1,14 @@
 #pragma once
 
 #include "ivi-logging.h"
+#include "ivi-logging-console.h"
+#include "ivi-logging-null.h"
+
+@BACKEND_DEFINES@
 
 #ifdef IVI_LOGGING_DLT_AVAILABLE
 #include "ivi-logging-dlt.h"
 #endif
-
-#include "ivi-logging-console.h"
-#include "ivi-logging-null.h"
 
 namespace logging {
 
