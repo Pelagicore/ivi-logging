@@ -19,7 +19,7 @@ template<typename Type, typename ... Types> void UNUSED(const Type& firstValue, 
 #define LOGGING_WARNING_OUTPUT_PREFIX "Logging: "
 
 enum class LogLevel {
-	None, Fatal, Error, Warning, Info, Debug, Verbose, All
+	None, Fatal, Error, Warning, Info, Debug, Verbose, All, Invalid
 };
 
 struct AppLogContext;
@@ -99,6 +99,28 @@ private:
 
 };
 
+class LogContextBase {
+
+public:
+
+	bool isSourceCodeLocationInfoEnabled() const {
+		return m_enableSourceCodeLocationInfo;
+	}
+
+	bool isThreadInfoEnabled() const {
+		return m_enableThreadInfo;
+	}
+
+	void registerContext();
+
+private:
+
+	static bool m_enableSourceCodeLocationInfo;
+	static bool m_enableThreadInfo;
+	static bool s_initialized;
+
+};
+
 class LogInfo {
 
 public:
@@ -123,7 +145,7 @@ public:
 		return m_fileName;
 	}
 
-	int getLineNumber() {
+	int getLineNumber() const {
 		return m_lineNumber;
 	}
 

@@ -135,7 +135,7 @@ int main(int argc, const char** argv) {
 	log_info() << "A log with std::ends" << std::ends;
 	log_info() << "A log with std::flush" << std::flush;
 
-    static const int DURATION = 10000;
+    static const int DURATION = 1000;
 
     log_info() << "Waiting " << DURATION << " seconds";
 

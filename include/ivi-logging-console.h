@@ -24,7 +24,7 @@ static constexpr const char ANSI_COLOR_DIM[] = "\x1b[2m";
 static constexpr const char ANSI_BLINK[] = "\x1b[5m";
 static constexpr const char ANSI_RESET_BRIGHT[] = "\x1b[0m";
 
-class StreamLogContextAbstract {
+class StreamLogContextAbstract : public LogContextBase {
 public:
 	StreamLogContextAbstract() {
 	}
@@ -38,9 +38,6 @@ public:
 
 	const char* getShortID() {
 		return m_context->getID();
-	}
-
-	void registerContext() {
 	}
 
 	virtual FILE* getFile(StreamLogData& data) = 0;
@@ -84,17 +81,7 @@ public:
 
 	static const int DEFAULT_WIDTH = 150;
 
-	static constexpr const char* DISABLE_LOGGING_ENV_VAR_NAME = "DISABLE_LOGGING_CONSOLE";
-
-	ConsoleLogContext() {
-		m_colorSupport = (getConsoleWidth() != 0);
-		if(!s_envVarCheckDone) {
-			if (getenv(DISABLE_LOGGING_ENV_VAR_NAME) != nullptr) {
-				s_defaultLogLevel = LogLevel::None;
-			}
-			s_envVarCheckDone = true;
-		}
-	}
+	ConsoleLogContext();
 
 	bool isEnabled(LogLevel level) const override {
 		return ( StreamLogContextAbstract::isEnabled(level) && (level <= s_defaultLogLevel) );
@@ -128,10 +115,11 @@ class StreamLogData : public LogData {
 public:
 	static constexpr const char* DEFAULT_PREFIX = "%4.4s [%s] ";
 
-	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = " [ %.2i | %s / %s - %d ]\n";
-	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = " [ %s%.0s:%d | %.2i%.0s ]\n";
-	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME = " [ %s%.0s - %d | %.2i-%.16s ]\n";
-	static constexpr const char* DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION = "\n";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_FILE_LOCATION = " [ %.2i | %s / %s - %d ]";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION = " | %s%.0s:%d ";
+	static constexpr const char* DEFAULT_THREAD_NAME_SUFFIX = "| %.2i / %s ";
+	static constexpr const char* DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME = " [ %s%.0s - %d | %.2i-%.16s ]";
+	static constexpr const char* DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION = "";
 
 	typedef StreamLogContextAbstract ContextType;
 
@@ -148,7 +136,7 @@ public:
 			// add terminal null character
 			m_content.resize(m_content.size() + 1);
 			m_content[m_content.size() - 1] = 0;
-			m_context->write( (char*)m_content.getData(), *this );
+			m_context->write( m_content.getData(), *this );
 		}
 	}
 
@@ -179,8 +167,13 @@ public:
 
 	virtual ByteArray getSuffix() {
 		ByteArray array;
-		writeFormatted( array, m_suffixFormat, m_data->getFileName(), m_data->getPrettyFunction(),
-				m_data->getLineNumber(), getThreadInformation().getID(), getThreadInformation().getName() );
+
+		// we ignore the env variable since we always want source code information in the console
+		writeFormatted( array, m_suffixFormat, m_data->getFileName(), m_data->getPrettyFunction(), m_data->getLineNumber());
+
+		if (m_context->isThreadInfoEnabled()) {
+			writeFormatted( array, m_suffixThreadNameFormat, getThreadInformation().getID(), getThreadInformation().getName());
+		}
 		return array;
 	}
 
@@ -197,7 +190,7 @@ public:
 		case LogLevel::Error : v = " Error "; break;
 		case LogLevel::Fatal : v = " Fatal "; break;
 		case LogLevel::Verbose : v = "Verbose"; break;
-		default : v = "unknown"; break;
+		default : v = "Invalid"; break;
 		}
 		return v;
 	}
@@ -243,6 +236,7 @@ protected:
 	//	const char* m_suffixFormat = DEFAULT_SUFFIX_WITHOUT_FILE_LOCATION;
 //	const char* m_suffixFormat = DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION_WITH_THREAD_NAME;
 	const char* m_suffixFormat = DEFAULT_SUFFIX_WITH_SHORT_FILE_LOCATION_WITHOUT_FUNCTION;
+	const char* m_suffixThreadNameFormat = DEFAULT_THREAD_NAME_SUFFIX;
 
 };
 
@@ -371,6 +365,8 @@ public:
 	    writeFooterColor();
 
 		ByteArray suffixArray = getSuffix();
+
+		writeFormatted(suffixArray, "\n");
 
 		int width = m_context->getConsoleWidth();
 

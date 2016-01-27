@@ -10,7 +10,7 @@ namespace logging {
 
 class DltLogData;
 
-class DltContextClass : public DltContext {
+class DltContextClass : public LogContextBase, private DltContext {
 
 public:
 	typedef DltLogData LogDataType;
@@ -44,18 +44,17 @@ public:
 	}
 
 	void registerContext() {
-		if ( !isAppRegistered() ) {
-			registerApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
-		}
-		//		auto code =
-		dlt_register_context( this, m_context->getID(), m_context->getDescription() );
-		//		assert(code == 0);
-		//		m_isInitialized = true;
-		//	}
+		LogContextBase::registerContext();
 
+		if ( !isDLTAppRegistered() ) {
+			registerDLTApp( s_pAppLogContext->m_id.c_str(), s_pAppLogContext->m_description.c_str() );
+			isDLTAppRegistered() = true;
+		}
+
+		dlt_register_context( this, m_context->getID(), m_context->getDescription() );
 	}
 
-	static bool& isAppRegistered() {
+	static bool& isDLTAppRegistered() {
 		static bool m_appRegistered = false;
 		return m_appRegistered;
 	}
@@ -63,7 +62,8 @@ public:
 	/**
 	 * Register the application.
 	 */
-	static void registerApp(const char* id, const char* description) {
+	static void registerDLTApp(const char* id, const char* description) {
+
 		pid_t pid = getpid();
 		char descriptionWithPID[1024];
 		snprintf(descriptionWithPID, sizeof(descriptionWithPID), "PID:%i / %s", pid, description);
@@ -76,7 +76,7 @@ public:
 			snprintf(pidAsHexString, sizeof(pidAsHexString), "%X", pid);
 			dltCode = dlt_register_app(pidAsHexString, descriptionWithPID);
 		}
-		isAppRegistered() = true;
+		isDLTAppRegistered() = true;
 
 		// TODO : caution is needed when forking a process if the connection to the DLT daemon is active.
 		// We can probably use pthread_atfork() to disconnect before the fork, and reconnect after
@@ -87,6 +87,7 @@ public:
 private:
 	LogContextCommon* m_context = nullptr;
 
+	friend class DltLogData;
 };
 
 
@@ -98,20 +99,6 @@ public:
 	DltLogData() {
 	}
 
-	/**
-	 * Enable or disable the output of source file information (file name, function name, line number)
-	 */
-	void setEnableSourceCodeLocationInfo(bool enabled) {
-		m_enableSourceCodeLocationInfo = enabled;
-	}
-
-	/**
-	 * Enable or disable the output of additional information about the thread generating the log
-	 */
-	void setEnableThreadInfo(bool enabled) {
-		m_enableThreadInfo = enabled;
-	}
-
 	void init(DltContextClass& context, LogInfo& data) {
 		m_data = &data;
 		m_context = &context;
@@ -121,7 +108,8 @@ public:
 
 	virtual ~DltLogData() {
 		if (isEnabled()) {
-			if (m_enableSourceCodeLocationInfo) {
+			if (m_context->isSourceCodeLocationInfoEnabled()) {
+				dlt_user_log_write_utf8_string(this, "                                                    | ");
 				if (m_data->getFileName() != nullptr) dlt_user_log_write_utf8_string( this, m_data->getFileName() );
 				if (m_data->getLineNumber() != -1) dlt_user_log_write_uint32( this, m_data->getLineNumber() );
 				if (m_data->getPrettyFunction() != nullptr) dlt_user_log_write_utf8_string(
@@ -130,25 +118,19 @@ public:
 						getPrettyFunction() );
 			}
 
-			if (m_enableThreadInfo) {
-				dlt_user_log_write_string(this, "| ThreadID");
+			if (m_context->isThreadInfoEnabled()) {
+				dlt_user_log_write_string(this, "ThreadID");
 				dlt_user_log_write_uint8( this, getThreadInformation().getID() );
 				dlt_user_log_write_string( this, getThreadInformation().getName() );
 			}
 
-			//			auto r =
 			dlt_user_log_write_finish(this);
-			//			assert(r==0);
 		}
 	}
 
 	bool isEnabled() const {
 		return m_enabled;
 	}
-
-	//	void writeFormatString(const char* v) {
-	//		dlt_user_log_write_utf8_string(this, v);
-	//	}
 
 	template<typename ... Args>
 	void writeFormatted(const char* format, Args ... args) {
@@ -168,8 +150,6 @@ public:
 private:
 	DltContextClass* m_context = nullptr;
 	LogInfo* m_data = nullptr;
-	bool m_enableSourceCodeLocationInfo = false;
-	bool m_enableThreadInfo = false;
 	bool m_enabled = false;
 
 };

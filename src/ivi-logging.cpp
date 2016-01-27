@@ -54,10 +54,10 @@ void setDefaultAPPIDSIfNeeded() {
 		//		processName += pidAsDecimal;
 		//		processName += " / ";
 		//		std::string processName = getProcessName(pid);
-		static AppLogContext defaultAppLogContext( pidAsHex,
-							   getProcessName(pid).c_str() );
+		static AppLogContext defaultAppLogContext( pidAsHex, getProcessName(pid).c_str() );
 		s_pAppLogContext = &defaultAppLogContext;
 	}
+
 }
 
 std::string byteArrayToString(const void* buffer, size_t length) {
@@ -119,7 +119,6 @@ std::string getProcessName(pid_t pid) {
 
 }
 
-
 const char* ThreadInformation::getName() const {
 	std::array<char, 64> buffer;
 	auto ret = pthread_getname_np( pthread_self(), buffer.data(), buffer.size() );
@@ -129,5 +128,32 @@ const char* ThreadInformation::getName() const {
 	return m_name.c_str();
 }
 
+static bool readEnvVarAsBool(const char* varName, bool defaultValue = false) {
+	auto value = getenv(varName);
+	if (value == nullptr)
+		return defaultValue;
+	return !strcmp(value, "1");
+}
+
+void LogContextBase::registerContext() {
+	if ( !s_initialized ) {
+		m_enableSourceCodeLocationInfo = readEnvVarAsBool("LOGGING_ENABLE_SOURCE_CODE_INFORMATION");
+		m_enableThreadInfo = readEnvVarAsBool("LOGGING_ENABLE_THREAD_INFORMATION");
+		s_initialized = true;
+	}
+}
+
+bool LogContextBase::m_enableSourceCodeLocationInfo;
+bool LogContextBase::m_enableThreadInfo;
+bool LogContextBase::s_initialized;
+
+ConsoleLogContext::ConsoleLogContext() {
+	m_colorSupport = (getConsoleWidth() != 0);
+	if(!s_envVarCheckDone) {
+		if(!readEnvVarAsBool("LOGGING_ENABLE_CONSOLE", true))
+			s_defaultLogLevel = LogLevel::None;
+		s_envVarCheckDone = true;
+	}
+}
 
 }
