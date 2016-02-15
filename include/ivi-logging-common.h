@@ -6,6 +6,10 @@
 #include <atomic>
 #include <array>
 
+#if __cplusplus < 201103L
+# error ivi-logging requires C++11
+#endif
+
 namespace logging {
 
 inline void UNUSED() {
