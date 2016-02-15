@@ -3,6 +3,7 @@
 #include "ivi-logging-common.h"
 #include "stdio.h"
 #include <mutex>
+#include <string>
 #include "ivi-logging-utils.h"
 
 namespace logging {
@@ -396,16 +397,16 @@ public:
         if ( !m_context->isColorsEnabled() )
             return;
 
-        const char* s = ANSI_COLOR_OFF;
+        std::string s = ANSI_COLOR_OFF;
         switch (m_data->getLogLevel()) {
         case LogLevel::Warning : s = ANSI_COLOR_MAGENTA ; break;
         case LogLevel::Error :
-        case LogLevel::Fatal: s = concatenate<ANSI_COLOR_RED, ANSI_COLOR_BRIGHT>(); break;
+        case LogLevel::Fatal : s = std::string(ANSI_COLOR_RED) + std::string(ANSI_COLOR_BRIGHT); break;
         case LogLevel::Verbose : s = ANSI_COLOR_GREEN; break;
         default: s = ANSI_COLOR_OFF; break;
         }
         *this << s;
-        m_invisibleCharacterCount += strlen(s);
+        m_invisibleCharacterCount += s.length();
     }
 
     void writeFooterColor() {
@@ -416,9 +417,9 @@ public:
         if ( !m_context->isColorsEnabled() )
             return;
 
-        auto s = concatenate<ANSI_COLOR_OFF, ANSI_RESET_BRIGHT>();
+        auto s = std::string(ANSI_COLOR_OFF) + std::string(ANSI_RESET_BRIGHT);
         *this << s;
-        m_invisibleCharacterCount += strlen(s);
+        m_invisibleCharacterCount += s.length();
     }
 
 	int m_invisibleCharacterCount = 0;

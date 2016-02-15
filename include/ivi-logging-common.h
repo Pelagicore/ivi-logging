@@ -173,18 +173,4 @@ __attribute__ ((deprecated)) typedef LogData LogDataCommon;
 
 std::string getStackTrace(unsigned int max_frames = 63);
 
-/// TODO : check if that template method is really inlined by GCC
-template<const char* s1, const char* s2, size_t SIZE1 = strlen(s1), size_t SIZE2 = strlen(s2)>
-static const char* concatenate() {
-    static char s[SIZE1 + SIZE2 + 1];
-    for (size_t i = 0; i < SIZE1; i++)
-        s[i] = s1[i];
-    for (size_t i = 0; i < SIZE2; i++)
-        s[SIZE1 + i] = s2[i];
-//    memcpy(s, s1, SIZE1);
-//    memcpy(s + SIZE1 , s2, SIZE2);
-    s[SIZE1 + SIZE2] = 0;
-    return s;
-}
-
 }
