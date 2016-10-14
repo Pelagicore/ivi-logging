@@ -6,7 +6,7 @@ typedef LogContextWithConsolePlusDLTIfAvailable LogContext;
 
 LOG_DECLARE_DEFAULT_CONTEXT(myTestContext, "TEST", "Test context");
 
-int main(int argc, const char** argv) {
+int main(int, const char**) {
 
 	new std::thread([&] () {
 				pthread_setname_np(pthread_self(), "MyThread2");

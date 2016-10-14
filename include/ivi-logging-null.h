@@ -30,7 +30,7 @@ public:
 	}
 
     template<typename ... Args>
-    void writeFormatted(const char* format, Args ... args) {
+    void writeFormatted(const char*, Args ...) {
     }
 
 };

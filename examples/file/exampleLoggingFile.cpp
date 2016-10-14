@@ -8,10 +8,9 @@ LOG_DECLARE_DEFAULT_CONTEXT(mainContext, "MAIN", "This is a description of that 
 
 static constexpr const char* FILE_PATH = "/tmp/ivi-logging-test.txt";
 
-int main(int argc, const char** argv) {
-
-    logging::FileLogContext::setFilePath(FILE_PATH);
-    log_info() << "This log should be written to a file as well : " << FILE_PATH;
+int main(int, const char**) {
+	logging::FileLogContext::setFilePath(FILE_PATH);
+	log_info() << "This log should be written to a file as well : " << FILE_PATH;
 	return 0;
 
 }

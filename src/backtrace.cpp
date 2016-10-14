@@ -16,7 +16,7 @@ std::string getStackTrace(unsigned int max_frames) {
 	ss << std::endl;
 
 	// storage array for stack trace address data
-	void* addrlist[max_frames + 1];
+	void **addrlist = new void*[max_frames + 1];
 
 	// retrieve current stack addresses
 	int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
@@ -83,6 +83,8 @@ std::string getStackTrace(unsigned int max_frames) {
 		free(symbollist);
 
 	}
+
+	delete [] addrlist;
 
 	return ss.str();
 
