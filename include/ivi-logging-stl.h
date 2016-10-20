@@ -30,11 +30,11 @@ template<typename KeyType, typename ValueType, class LogDataType = logging::LogD
 LogDataType& operator<<(LogDataType& log, const std::map<KeyType, ValueType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
-		log<< " { ";
+		log << " { ";
 		log << element.first;
 		log << " = ";
 		log << element.second;
-		log<< " }, ";
+		log << " }, ";
 	}
 	log << " ] ";
 	return log;
@@ -45,11 +45,11 @@ template<typename KeyType, typename ValueType, class LogDataType = logging::LogD
 LogDataType& operator<<(LogDataType& log, const std::unordered_map<KeyType, ValueType>& v) {
 	log << " [ ";
 	for (auto& element : v) {
-		log<< " { ";
+		log << " { ";
 		log << element.first;
 		log << " = ";
 		log << element.second;
-		log<< " }, ";
+		log << " }, ";
 	}
 	log << " ] ";
 	return log;

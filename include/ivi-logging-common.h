@@ -173,6 +173,7 @@ __attribute__ ((deprecated)) typedef LogData LogDataCommon;
 
 std::string getStackTrace(unsigned int max_frames = 63);
 
+/*
 /// TODO : check if that template method is really inlined by GCC
 template<const char* s1, const char* s2, size_t SIZE1 = strlen(s1), size_t SIZE2 = strlen(s2)>
 static const char* concatenate() {
@@ -186,5 +187,6 @@ static const char* concatenate() {
     s[SIZE1 + SIZE2] = 0;
     return s;
 }
+*/
 
 }

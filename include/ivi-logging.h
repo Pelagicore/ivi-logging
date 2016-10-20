@@ -63,44 +63,44 @@ private:
 
 };
 
-#define log_with_context(_context_, severity, ...) \
+#define log_with_context(_context_, severity) \
 	for (auto dummy = &(_context_); (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
-		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).write(__VA_ARGS__)
+		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 #ifndef log_error
 
-#define log_with_severity(severity, ...) log_with_context(getDefaultContext(), severity, ## __VA_ARGS__)
+#define log_with_severity(severity) log_with_context(getDefaultContext(), severity)
 
 /**
  * Generate a log with "fatal" severity
  */
-#define log_fatal(...) log_with_context(getDefaultContext(), logging::LogLevel::Fatal, ## __VA_ARGS__)
+#define log_fatal() log_with_context(getDefaultContext(), logging::LogLevel::Fatal)
 
 /**
  * Generate a log with "error" severity
  */
-#define log_error(...) log_with_context(getDefaultContext(), logging::LogLevel::Error, ## __VA_ARGS__)
+#define log_error() log_with_context(getDefaultContext(), logging::LogLevel::Error)
 
 /**
  * Generate a log with "verbose" severity
  */
-#define log_verbose(...) log_with_context(getDefaultContext(), logging::LogLevel::Verbose, ## __VA_ARGS__)
+#define log_verbose() log_with_context(getDefaultContext(), logging::LogLevel::Verbose)
 
 /**
  * Generate a log with "info" severity
  */
-#define log_info(...) log_with_context(getDefaultContext(), logging::LogLevel::Info, ## __VA_ARGS__)
+#define log_info() log_with_context(getDefaultContext(), logging::LogLevel::Info)
 
 /**
  * Generate a log with "warning" severity
  */
-#define log_warn(...) log_with_context(getDefaultContext(), logging::LogLevel::Warning, ## __VA_ARGS__)
-#define log_warning(...) log_warn(__VA_ARGS__)
+#define log_warn() log_with_context(getDefaultContext(), logging::LogLevel::Warning)
+#define log_warning() log_warn()
 
 /**
  * Generate a log with "debug" severity
  */
-#define log_debug(...) log_with_context(getDefaultContext(), logging::LogLevel::Debug, ## __VA_ARGS__)
+#define log_debug() log_with_context(getDefaultContext(), logging::LogLevel::Debug)
 
 /**
  * Defines the identifiers of an application. This macro should be used at one place in every application.

@@ -24,6 +24,8 @@ static constexpr const char ANSI_COLOR_DIM[] = "\x1b[2m";
 static constexpr const char ANSI_BLINK[] = "\x1b[5m";
 static constexpr const char ANSI_RESET_BRIGHT[] = "\x1b[0m";
 
+
+
 class StreamLogContextAbstract : public LogContextBase {
 public:
 	StreamLogContextAbstract() {
@@ -396,16 +398,16 @@ public:
         if ( !m_context->isColorsEnabled() )
             return;
 
-        const char* s = ANSI_COLOR_OFF;
+        std::string s = ANSI_COLOR_OFF;
         switch (m_data->getLogLevel()) {
         case LogLevel::Warning : s = ANSI_COLOR_MAGENTA ; break;
         case LogLevel::Error :
-        case LogLevel::Fatal: s = concatenate<ANSI_COLOR_RED, ANSI_COLOR_BRIGHT>(); break;
+        case LogLevel::Fatal: s = ANSI_COLOR_RED; s += ANSI_COLOR_BRIGHT;break;
         case LogLevel::Verbose : s = ANSI_COLOR_GREEN; break;
         default: s = ANSI_COLOR_OFF; break;
         }
         *this << s;
-        m_invisibleCharacterCount += strlen(s);
+        m_invisibleCharacterCount += s.length();
     }
 
     void writeFooterColor() {
@@ -416,9 +418,10 @@ public:
         if ( !m_context->isColorsEnabled() )
             return;
 
-        auto s = concatenate<ANSI_COLOR_OFF, ANSI_RESET_BRIGHT>();
+        std::string s = ANSI_COLOR_OFF;
+        s += ANSI_RESET_BRIGHT;
         *this << s;
-        m_invisibleCharacterCount += strlen(s);
+        m_invisibleCharacterCount += s.length();
     }
 
 	int m_invisibleCharacterCount = 0;

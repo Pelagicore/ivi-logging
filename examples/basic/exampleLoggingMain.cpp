@@ -91,7 +91,7 @@ int main(int, const char**) {
 	log_debug().writeFormatted("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
 	log_error().writeFormatted("Another way to use the printf variant %i", 7345).writeFormatted(". Done");
 
-	log_error("This one is mixed. Here is a float : ") << 5.7F;
+	log_error().writeFormatted("This one is mixed. Here is a float : ") << 5.7F;
 	log_warn() << 5.7;
 	log_warn() << "Test string";
 
