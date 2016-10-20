@@ -39,7 +39,7 @@ else()
 	set(CONSOLE_OR_NULL NullLogContext)
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -pedantic -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -pedantic -Wextra -Wno-variadic-macros")
 
 include_directories(
 	include
