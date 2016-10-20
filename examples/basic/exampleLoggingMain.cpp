@@ -49,23 +49,23 @@ struct MySubClass : MyClass {
 
 struct MyClassWithImportedContext {
 
-    // Define the log context to be used for that class. This overrides any default context which might have previously be set
-    LOG_SET_CLASS_CONTEXT(anotherContext);
+	// Define the log context to be used for that class. This overrides any default context which might have previously be set
+	LOG_SET_CLASS_CONTEXT(anotherContext);
 
-    void doSomething() {
-        log_debug() << "We are doing something. Imported context"; // This log uses the class log context
-    }
+	void doSomething() {
+		log_debug() << "We are doing something. Imported context"; // This log uses the class log context
+	}
 
 };
 
 struct SecondClassWithImportedContext {
 
-    // Define the log context to be used for that class. This overrides any default context which might have previously be set
-    LOG_SET_CLASS_CONTEXT(anotherContext);
+	// Define the log context to be used for that class. This overrides any default context which might have previously be set
+	LOG_SET_CLASS_CONTEXT(anotherContext);
 
-    void doSomething() {
-        log_debug() << "We are doing something. Imported context"; // This log uses the class log context
-    }
+	void doSomething() {
+		log_debug() << "We are doing something. Imported context"; // This log uses the class log context
+	}
 
 };
 
@@ -86,7 +86,7 @@ int generateDataForLogging() {
 }
 
 
-int main(int argc, const char** argv) {
+int main(int, const char**) {
 
 	log_debug().writeFormatted("This log is using a format string, similar to the printf syntax. This is an int : %i", 345);
 	log_error().writeFormatted("Another way to use the printf variant %i", 7345).writeFormatted(". Done");
@@ -103,11 +103,11 @@ int main(int argc, const char** argv) {
 	o.doSomething();
 	o.doSomethingElse();
 
-    MyClassWithImportedContext o2;
-    o2.doSomething();
+	MyClassWithImportedContext o2;
+	o2.doSomething();
 
-    SecondClassWithImportedContext o3;
-    o3.doSomething();
+	SecondClassWithImportedContext o3;
+	o3.doSomething();
 
 	std::string stdString = "That is a std::string";
 	log_error().write("Values can be passed at once to the write method. ", stdString, " / " , 1234);
@@ -135,18 +135,17 @@ int main(int argc, const char** argv) {
 	log_info() << "A log with std::ends" << std::ends;
 	log_info() << "A log with std::flush" << std::flush;
 
-    static const int DURATION = 1000;
+	static const int DURATION = 1000;
 
-    log_info() << "Waiting " << DURATION << " seconds";
+	log_info() << "Waiting " << DURATION << " seconds";
 
-    for(int i = DURATION ; i>0 ; i--) {
-        log_info() << i << " seconds before termination";
-        sleep(1);
-    }
+	for(int i = DURATION ; i>0 ; i--) {
+		log_info() << i << " seconds before termination";
+		sleep(1);
+	}
 
 	disableConsoleLogging();
 	log_error() << "This log should not visible in the console";
 
 	log_info() << "We are done. Bye";
-
 }

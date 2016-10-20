@@ -28,10 +28,10 @@ void thread2() {
 	loop(threadName);
 }
 
-int main(int argc, const char** argv) {
+int main(int, char **) {
 	log_debug() << "Hello from main thread";
 	std::thread t1(thread1);
 	std::thread t2(thread2);
-    t1.join();
-    t2.join();
+	t1.join();
+	t2.join();
 }

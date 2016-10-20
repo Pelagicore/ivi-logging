@@ -63,87 +63,87 @@ private:
 
 };
 
-#define log_with_context(_context_, severity, args ...) \
+#define log_with_context(_context_, severity, ...) \
 	for (auto dummy = &(_context_); (dummy != nullptr) && dummy->isEnabled(severity); dummy = nullptr) \
-		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).write(args)
+		(_context_).createLog(severity, __FILE__, __LINE__, __PRETTY_FUNCTION__).write(__VA_ARGS__)
 
 #ifndef log_error
 
-#define log_with_severity(severity, args ...) log_with_context(getDefaultContext(), severity, ## args)
+#define log_with_severity(severity, ...) log_with_context(getDefaultContext(), severity, ## __VA_ARGS__)
 
 /**
  * Generate a log with "fatal" severity
  */
-#define log_fatal(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Fatal, ## args)
+#define log_fatal(...) log_with_context(getDefaultContext(), logging::LogLevel::Fatal, ## __VA_ARGS__)
 
 /**
  * Generate a log with "error" severity
  */
-#define log_error(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Error, ## args)
+#define log_error(...) log_with_context(getDefaultContext(), logging::LogLevel::Error, ## __VA_ARGS__)
 
 /**
  * Generate a log with "verbose" severity
  */
-#define log_verbose(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Verbose, ## args)
+#define log_verbose(...) log_with_context(getDefaultContext(), logging::LogLevel::Verbose, ## __VA_ARGS__)
 
 /**
  * Generate a log with "info" severity
  */
-#define log_info(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Info, ## args)
+#define log_info(...) log_with_context(getDefaultContext(), logging::LogLevel::Info, ## __VA_ARGS__)
 
 /**
  * Generate a log with "warning" severity
  */
-#define log_warn(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Warning, ## args)
-#define log_warning(args ...) log_warn(args)
+#define log_warn(...) log_with_context(getDefaultContext(), logging::LogLevel::Warning, ## __VA_ARGS__)
+#define log_warning(...) log_warn(__VA_ARGS__)
 
 /**
  * Generate a log with "debug" severity
  */
-#define log_debug(args ...) log_with_context(getDefaultContext(), logging::LogLevel::Debug, ## args)
+#define log_debug(...) log_with_context(getDefaultContext(), logging::LogLevel::Debug, ## __VA_ARGS__)
 
 /**
  * Defines the identifiers of an application. This macro should be used at one place in every application.
  */
 #define LOG_DEFINE_APP_IDS(appID, appDescription) \
-	logging::AppLogContext s_appLogContext(appID, appDescription);
+	logging::AppLogContext s_appLogContext(appID, appDescription)
 
 /**
  * Create a LogContext with the given ID (4 characters in case of DLT support) and description
  */
 #define LOG_DECLARE_CONTEXT(contextName, contextShortID, contextDescription) LogContext contextName( \
 		contextShortID,	\
-		contextDescription);
+		contextDescription)
 
 /**
  * Create a new context and define is as default context for the current scope
  */
 #define LOG_DECLARE_DEFAULT_CONTEXT(context, contextID, contextDescription) \
 	LOG_DECLARE_CONTEXT(context, contextID, contextDescription); \
-	LOG_SET_DEFAULT_CONTEXT(context);
+	LOG_SET_DEFAULT_CONTEXT(context)
 
 /**
  * Import the given context, which should be exported by another module
  */
-#define LOG_IMPORT_CONTEXT(contextName) extern LogContext contextName;
+#define LOG_IMPORT_CONTEXT(contextName) extern LogContext contextName
 
 /**
  * Set the given context as default for the current scope
  */
 #define LOG_SET_DEFAULT_CONTEXT(context) static std::function<LogContext& ()> getDefaultContext = \
-	[] ()->LogContext & {return context; };
+	[] ()->LogContext & {return context; }
 
 /**
  * Import the given context and set it as default for the current scope
  */
 #define LOG_IMPORT_DEFAULT_CONTEXT(context) \
-		LOG_IMPORT_CONTEXT(context) \
+		LOG_IMPORT_CONTEXT(context); \
 		LOG_SET_DEFAULT_CONTEXT(context)
 
 /**
  * Set the given context as default for the current class
  */
-#define LOG_SET_CLASS_CONTEXT(context) static inline LogContext &getDefaultContext() {return context; }
+#define LOG_SET_CLASS_CONTEXT(context) static inline LogContext &getDefaultContext() { return context; }
 
 /**
  *

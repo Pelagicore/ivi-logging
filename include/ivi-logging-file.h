@@ -16,7 +16,7 @@ class FileLogContext : public StreamLogContextAbstract {
 public:
 	typedef FileLogData LogDataType;
 
-    FILE* getFile(logging::StreamLogData& data) override {
+    FILE* getFile(logging::StreamLogData&) override {
         return getFileStatic();
     }
 
