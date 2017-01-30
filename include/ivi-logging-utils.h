@@ -105,20 +105,6 @@ public:
 			return m_dynamicData->size();
 	}
 
-	/**
-	 * Reserve space for a block of the given size and return the position of the block
-	 */
-	size_t skip(size_t length) {
-		auto returnValue = size();
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wvla"
-		char dummyData[length];
-#pragma GCC diagnostic pop
-		memset(dummyData, 0, length);
-		append( dummyData, sizeof(dummyData) );
-		return returnValue;
-	}
-
 	std::string toString() const {
 		return byteArrayToString( getData(), size() );
 	}
