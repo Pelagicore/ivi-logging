@@ -199,6 +199,10 @@ inline DltLogData& operator<<(DltLogData& data, long int v) {
 	dlt_user_log_write_int32(&data, v);
 	return data;
 }
+inline DltLogData& operator<<(DltLogData& data, unsigned long int v) {
+	dlt_user_log_write_uint32(&data, v);
+	return data;
+}
 #endif
 
 inline DltLogData& operator<<(DltLogData& data, double f) {
