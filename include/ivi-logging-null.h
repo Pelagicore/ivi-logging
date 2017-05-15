@@ -82,6 +82,10 @@ inline NullLogData& operator<<(NullLogData& data, long int v) {
     UNUSED(v);
     return data;
 }
+inline NullLogData& operator<<(NullLogData& data, unsigned long int v) {
+    UNUSED(v);
+    return data;
+}
 #endif
 
 inline NullLogData& operator<<(NullLogData& data, double v) {
