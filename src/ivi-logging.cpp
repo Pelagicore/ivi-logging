@@ -46,7 +46,7 @@ void setDefaultAPPIDSIfNeeded() {
 		//			LOGGING_WARNING_OUTPUT_PREFIX
 		//			"Your application should define its ID using the LOG_DEFINE_APP_IDS macro\n");
 		pid_t pid = getpid();
-		char pidAsHex[5];
+		char pidAsHex[9];
 		snprintf(pidAsHex, sizeof(pidAsHex), "%X", pid);
 		//		char pidAsDecimal[6];
 		//		snprintf(pidAsDecimal, sizeof(pidAsDecimal), "%i", pid);

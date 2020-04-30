@@ -218,7 +218,8 @@ public:
 #pragma GCC diagnostic push
 		// Make sure GCC does not complain about not being able to check the format string since it is no literal string
 #pragma GCC diagnostic ignored "-Wformat-security"
-		int size = snprintf(NULL, 0, format, args ...) + 1; // +1 since the snprintf returns the number of characters excluding the null termination
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+		int size = snprintf(nullptr, 0, format, args ...) + 1; // +1 since the snprintf returns the number of characters excluding the null termination
 		size_t startOfStringIndex = byteArray.size();
 		byteArray.resize(byteArray.size() + size);
 		char* p = byteArray.getData() + startOfStringIndex;
