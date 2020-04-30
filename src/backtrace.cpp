@@ -6,27 +6,27 @@
 #include <execinfo.h>
 #include <cxxabi.h>
 #include <sstream>
-#include <sstream>
+#include <vector>
 
 namespace logging {
 
-std::string getStackTrace(unsigned int max_frames) {
+std::string getStackTrace(const unsigned int max_frames) {
 	std::stringstream ss;
 
 	ss << std::endl;
 
 	// storage array for stack trace address data
-	void **addrlist = new void*[max_frames + 1];
+	std::vector<void*> addrlist(max_frames + 1);
 
 	// retrieve current stack addresses
-	int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
+	int addrlen = backtrace(addrlist.data(), addrlist.size());
 
 	if (addrlen == 0) {
 		ss << "<empty, possibly corrupt>";
 	} else {
 		// resolve addresses into strings containing "filename(function+address)",
 		// this array must be free()-ed
-		char** symbollist = backtrace_symbols(addrlist, addrlen);
+		char** symbollist = backtrace_symbols(addrlist.data(), addrlen);
 
 		// allocate string which will be filled with the demangled function name
 		size_t funcnamesize = 256;
@@ -83,8 +83,6 @@ std::string getStackTrace(unsigned int max_frames) {
 		free(symbollist);
 
 	}
-
-	delete [] addrlist;
 
 	return ss.str();
 

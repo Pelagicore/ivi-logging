@@ -41,7 +41,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-variadic-macros -Wno-vla-extension -Wno-gnu-zero-variadic-macro-arguments")
+add_definitions(-Wall -pedantic -Wextra -Wno-variadic-macros -Wformat=2 -Wformat-truncation=2)
 
 include_directories(
 	include

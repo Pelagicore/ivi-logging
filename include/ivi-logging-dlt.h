@@ -72,7 +72,7 @@ public:
 
 		// TODO : The piece of code below would be useful if the DLT library didn't always return 0
 		if (dltCode != 0 ) {
-			char pidAsHexString[5];
+			char pidAsHexString[9];
 			snprintf(pidAsHexString, sizeof(pidAsHexString), "%X", pid);
 			dltCode = dlt_register_app(pidAsHexString, descriptionWithPID);
 		}
@@ -140,6 +140,7 @@ public:
 #pragma GCC diagnostic push
 			// Make sure GCC does not complain about not being able to check the format string since it is no literal string
 #pragma GCC diagnostic ignored "-Wformat-security"
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
 			snprintf(b, sizeof(b), format, args ...);
 #pragma GCC diagnostic pop
 
